@@ -1,0 +1,60 @@
+@import '../../../../theme';
+
+.header {
+  background-color: rgba($card-background, 0.05);
+  backdrop-filter: blur(10px);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba($text-color, 0.1);
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo {
+      a {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $primary;
+        text-decoration: none;
+      }
+    }
+
+    .nav {
+      ul {
+        display: flex;
+        list-style: none;
+        gap: 1.5rem;
+
+        li {
+          a {
+            color: $text-light;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+
+            &:hover {
+              color: $primary;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @include mobile {
+    .header-content {
+      flex-direction: column;
+      gap: 1rem;
+
+      .nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+      }
+    }
+  }
+}

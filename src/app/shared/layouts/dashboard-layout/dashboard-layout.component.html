@@ -1,0 +1,26 @@
+<div class="dashboard-layout">
+  <div class="dashboard-sidebar">
+    <div class="sidebar-header">
+      <h2>Dashboard</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <a routerLink="." routerLinkActive="active">Overview</a>
+        </li>
+        <li>
+          <a routerLink="bookings" routerLinkActive="active">Bookings</a>
+        </li>
+        <li>
+          <a routerLink="profile" routerLinkActive="active">Profile</a>
+        </li>
+        <li>
+          <a routerLink="settings" routerLinkActive="active">Settings</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <div class="dashboard-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

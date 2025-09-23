@@ -1,0 +1,144 @@
+@import '../../../../../theme';
+
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+
+  .dashboard-header {
+    margin-bottom: 2rem;
+    text-align: center;
+
+    h1 {
+      color: $primary;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: $text-light;
+    }
+  }
+
+  .dashboard-section {
+    background-color: $card-background;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 2rem;
+    margin-bottom: 2rem;
+
+    h2 {
+      color: $card-text-color;
+      margin-bottom: 1.5rem;
+    }
+
+    .bookings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      .booking-card {
+        background-color: $background-color;
+        border-radius: 8px;
+        padding: 1.5rem;
+        border-left: 4px solid $primary;
+
+        .booking-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+
+          h3 {
+            color: $card-text-color;
+            margin: 0;
+          }
+
+          .booking-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+
+            &.status-pending {
+              background-color: rgba($accent, 0.2);
+              color: $accent;
+            }
+
+            &.status-confirmed {
+              background-color: rgba($primary, 0.2);
+              color: $primary;
+            }
+
+            &.status-in-progress {
+              background-color: rgba($success-color, 0.2);
+              color: $success-color;
+            }
+
+            &.status-completed {
+              background-color: rgba($success-color, 0.2);
+              color: $success-color;
+            }
+
+            &.status-cancelled {
+              background-color: rgba($error-color, 0.2);
+              color: $error-color;
+            }
+          }
+        }
+
+        .booking-details {
+          p {
+            color: $text-light;
+            margin-bottom: 0.5rem;
+
+            strong {
+              color: $card-text-color;
+            }
+          }
+        }
+
+        .booking-actions {
+          margin-top: 1rem;
+          display: flex;
+          gap: 0.75rem;
+
+          .btn-primary, .btn-secondary {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+          }
+
+          .btn-primary {
+            background-color: $primary;
+            color: $card-background;
+
+            &:hover {
+              background-color: darken($primary, 10%);
+            }
+          }
+
+          .btn-secondary {
+            background-color: $secondary-color;
+            color: $card-background;
+
+            &:hover {
+              background-color: darken($secondary-color, 10%);
+            }
+          }
+        }
+      }
+    }
+
+    .no-bookings {
+      text-align: center;
+      padding: 2rem;
+
+      p {
+        color: $card-text-color;
+      }
+    }
+  }
+}

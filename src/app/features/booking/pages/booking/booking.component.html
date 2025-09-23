@@ -1,0 +1,89 @@
+<div class="booking-container">
+    <div *ngIf="service" class="booking-card">
+      <div class="service-info">
+        <h2>Book Service: {{ service.name }}</h2>
+        <p>{{ service.description }}</p>
+        <div class="service-price">Price: ${{ service.price }}</div>
+      </div>
+  
+      <div *ngIf="assemblers.length > 0" class="assemblers-section">
+        <h3>Select an Assembler</h3>
+        <div class="assemblers-list">
+          <div 
+            *ngFor="let assembler of assemblers" 
+            class="assembler-item"
+            [ngClass]="{'selected': assembler.id === assemblerId}"
+            (click)="selectAssembler(assembler.id)"
+          >
+            <div class="assembler-info">
+              <img [src]="assembler.profileImage" [alt]="assembler.name" class="assembler-avatar">
+              <div>
+                <div class="assembler-name">{{ assembler.name }}</div>
+                <div class="assembler-specialization">{{ assembler.specialization }}</div>
+                <div class="assembler-rating">
+                  <span class="stars">{{ getStarRating(assembler.averageRating) }}</span>
+                  <span>{{ assembler.averageRating }} ({{ assembler.reviewCount }} reviews)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input 
+            id="date" 
+            type="date" 
+            formControlName="date" 
+            class="form-control" 
+            [min]="getMinDate()"
+            [ngClass]="{'is-invalid': bookingForm.controls['date'].touched && bookingForm.controls['date'].invalid}"
+          >
+          <div *ngIf="bookingForm.controls['date'].touched && bookingForm.controls['date'].invalid" class="invalid-feedback">
+            Date is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="time">Time</label>
+          <input 
+            id="time" 
+            type="time" 
+            formControlName="time" 
+            class="form-control" 
+            [ngClass]="{'is-invalid': bookingForm.controls['time'].touched && bookingForm.controls['time'].invalid}"
+          >
+          <div *ngIf="bookingForm.controls['time'].touched && bookingForm.controls['time'].invalid" class="invalid-feedback">
+            Time is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="notes">Additional Notes (Optional)</label>
+          <textarea 
+            id="notes" 
+            formControlName="notes" 
+            class="form-control" 
+            rows="3"
+          ></textarea>
+        </div>
+  
+        <div *ngIf="successMessage" class="alert alert-success">
+          {{ successMessage }}
+        </div>
+  
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+  
+        <button type="submit" class="btn-primary" [disabled]="bookingForm.invalid">Confirm Booking</button>
+      </form>
+    </div>
+  
+    <div *ngIf="!service" class="error-message">
+      <p>Service not found.</p>
+      <button class="btn-secondary" routerLink="/services">Back to Services</button>
+    </div>
+  </div>

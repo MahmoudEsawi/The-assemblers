@@ -1,0 +1,27 @@
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <div class="logo">
+        <a routerLink="/">The Assemblers</a>
+      </div>
+      
+      <nav class="nav">
+        <ul>
+          <li><a routerLink="/">Home</a></li>
+          <li><a routerLink="/services">Services</a></li>
+          <li *ngIf="!authService.isAuthenticated()">
+            <a routerLink="/login">Login</a>
+          </li>
+          <li *ngIf="authService.isAuthenticated()">
+            <a [routerLink]="authService.hasRole('customer') ? '/dashboard-customer' : '/dashboard-assembler'">
+              Dashboard
+            </a>
+          </li>
+          <li *ngIf="authService.isAuthenticated()">
+            <a (click)="authService.logout()">Logout</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>

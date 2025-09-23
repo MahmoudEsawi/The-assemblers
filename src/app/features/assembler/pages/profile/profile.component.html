@@ -1,0 +1,67 @@
+<div class="profile-container">
+  <div *ngIf="assembler" class="profile-card">
+    <div class="profile-header">
+      <div class="profile-cover" [style.background-image]="'url(' + assembler.coverImage + ')'"></div>
+      <div class="profile-info">
+        <div class="profile-avatar">
+          <img [src]="assembler.profileImage" [alt]="assembler.name">
+        </div>
+        <div class="profile-details">
+          <h1>{{ assembler.name }}</h1>
+          <p class="profile-specialization">{{ assembler.specialization }}</p>
+          <div class="profile-rating">
+            <span class="stars">{{ getStarRating(assembler.averageRating) }}</span>
+            <span>{{ assembler.averageRating }}</span>
+          </div>
+          <p class="profile-location">{{ assembler.location }}</p>
+          <div *ngIf="assembler.isVerified" class="verified-badge">
+            <span>✓ Verified Assembler</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <h2>About</h2>
+      <p>{{ assembler.description }}</p>
+    </div>
+
+    <div class="profile-section">
+      <h2>Services</h2>
+      <div *ngIf="services.length > 0" class="services-grid">
+        <div *ngFor="let service of services" class="service-item">
+          <h3>{{ service.name }}</h3>
+          <p>{{ service.description }}</p>
+          <div class="service-price">${{ service.price }}</div>
+        </div>
+      </div>
+      <div *ngIf="services.length === 0" class="no-services">
+        <p>No services listed yet.</p>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <h2>Reviews</h2>
+      <div *ngIf="reviews.length > 0" class="reviews-list">
+        <div *ngFor="let review of reviews" class="review-item">
+          <div class="review-header">
+            <div class="review-rating">
+              <span class="stars">{{ getStarRating(review.rating) }}</span>
+              <span>{{ review.rating }}/5</span>
+            </div>
+            <div class="review-date">{{ review.createdAt | date:'mediumDate' }}</div>
+          </div>
+          <p class="review-comment">{{ review.comment }}</p>
+        </div>
+      </div>
+      <div *ngIf="reviews.length === 0" class="no-reviews">
+        <p>No reviews yet.</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!assembler" class="error-message">
+    <p>Assembler not found.</p>
+    <button class="btn-secondary" routerLink="/services">Back to Services</button>
+  </div>
+</div>

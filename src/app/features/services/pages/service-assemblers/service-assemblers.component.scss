@@ -1,0 +1,102 @@
+@import '../../../../../theme';
+
+.service-assemblers-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+
+  .service-header {
+    background-color: $card-background;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 2rem;
+    margin-bottom: 2rem;
+
+    .service-info {
+      h1 {
+        color: $primary;
+        margin-bottom: 0.75rem;
+      }
+
+      p {
+        color: $card-text-color;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+      }
+
+      .service-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .service-category {
+          background-color: $primary;
+          color: $card-background;
+          padding: 0.5rem 1rem;
+          border-radius: 20px;
+          font-weight: 500;
+        }
+
+        .service-price {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: $accent;
+        }
+      }
+    }
+  }
+
+  .assemblers-section {
+    h2 {
+      color: $primary;
+      margin-bottom: 1.5rem;
+    }
+
+    .assemblers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    background-color: $card-background;
+    border-radius: 8px;
+    margin-top: 2rem;
+
+    p {
+      font-size: 1.1rem;
+      color: $text-secondary;
+    }
+  }
+
+  .error-message {
+    text-align: center;
+    padding: 2rem;
+    background-color: $card-background;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    p {
+      color: $card-text-color;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-secondary {
+      background-color: $secondary-color;
+      color: $card-background;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+  }
+}

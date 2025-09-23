@@ -1,0 +1,10 @@
+<div class="search-bar">
+  <input 
+    type="text" 
+    [(ngModel)]="searchTerm" 
+    (ngModelChange)="onSearch()"
+    placeholder="Search services or assemblers..."
+    class="search-input"
+  >
+  <button *ngIf="searchTerm" class="clear-btn" (click)="onClear()">×</button>
+</div>

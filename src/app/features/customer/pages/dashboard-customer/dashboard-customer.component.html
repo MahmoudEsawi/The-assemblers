@@ -1,0 +1,30 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Customer Dashboard</h1>
+    <p>Welcome back, {{ user.name }}!</p>
+  </div>
+
+  <div class="dashboard-section">
+    <h2>Your Bookings</h2>
+    <div *ngIf="bookings.length > 0" class="bookings-list">
+      <div *ngFor="let booking of bookings" class="booking-card">
+        <div class="booking-header">
+          <h3>Booking #{{ booking.id }}</h3>
+          <span class="booking-status" [ngClass]="getStatusClass(booking.status)">
+            {{ booking.status | titlecase }}
+          </span>
+        </div>
+        <div class="booking-details">
+          <p><strong>Service ID:</strong> {{ booking.serviceId }}</p>
+          <p><strong>Assembler ID:</strong> {{ booking.assemblerId }}</p>
+          <p><strong>Date:</strong> {{ booking.date | date:'medium' }}</p>
+          <p *ngIf="booking.notes"><strong>Notes:</strong> {{ booking.notes }}</p>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="bookings.length === 0" class="no-bookings">
+      <p>You don't have any bookings yet.</p>
+      <button class="btn-primary" routerLink="/" >Browse Services</button>
+    </div>
+  </div>
+</div>

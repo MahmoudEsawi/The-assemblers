@@ -1,0 +1,44 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Service } from '../../../../core/models/service.model';
+import { MockDataService } from '../../../../core/services/mock-data.service';
+import { AssemblerCardComponent } from '../../../../shared/components/assembler-card/assembler-card.component';
+
+@Component({
+  selector: 'app-service-assemblers',
+  standalone: true,
+  imports: [CommonModule, AssemblerCardComponent],
+  templateUrl: './service-assemblers.component.html',
+  styleUrls: ['./service-assemblers.component.scss']
+})
+export class ServiceAssemblersComponent implements OnInit {
+  service: Service | null = null;
+  assemblers: any[] = [];
+  serviceId: string | null = null;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private mockDataService: MockDataService
+  ) {}
+
+  ngOnInit(): void {
+    this.serviceId = this.route.snapshot.paramMap.get('serviceId');
+    
+    if (this.serviceId) {
+      this.service = this.mockDataService.getServiceById(this.serviceId) ?? null;
+      this.assemblers = this.mockDataService.getAssemblersByService(this.serviceId);
+    }
+  }
+
+  bookService(assemblerId: string): void {
+    if (this.serviceId) {
+      this.router.navigate(['/booking', this.serviceId, assemblerId]);
+    }
+  }
+
+  viewAssemblerProfile(assemblerId: string): void {
+    this.router.navigate(['/profile', assemblerId]);
+  }
+}

@@ -1,0 +1,205 @@
+@import '../../../../../theme';
+
+.booking-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+
+  .booking-card {
+    background-color: $card-background;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 2rem;
+
+    .service-info {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+      h2 {
+        color: $primary;
+        margin-bottom: 0.75rem;
+      }
+
+      p {
+        color: $card-text-color;
+        margin-bottom: 1rem;
+      }
+
+      .service-price {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: $accent;
+      }
+    }
+
+    .assemblers-section {
+      margin-bottom: 2rem;
+
+      h3 {
+        color: $primary;
+        margin-bottom: 1rem;
+      }
+
+      .assemblers-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .assembler-item {
+          padding: 1rem;
+          border: 1px solid #e0e0e0;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.3s;
+
+          &:hover {
+            background-color: rgba($primary, 0.05);
+          }
+
+          &.selected {
+            border-color: $primary;
+            background-color: rgba($primary, 0.1);
+          }
+
+          .assembler-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            .assembler-avatar {
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+              object-fit: cover;
+            }
+
+            .assembler-name {
+              font-weight: 600;
+              color: $card-text-color;
+            }
+
+            .assembler-specialization {
+              font-size: 0.9rem;
+              color: $text-secondary;
+            }
+
+            .assembler-rating {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              font-size: 0.9rem;
+              color: $text-secondary;
+
+              .stars {
+                color: $accent;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: $card-text-color;
+        font-weight: 500;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        background-color: $background-color;
+        color: $text-color;
+        transition: border-color 0.3s;
+
+        &:focus {
+          outline: none;
+          border-color: $primary;
+          box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+        }
+
+        &.is-invalid {
+          border-color: $error-color;
+        }
+      }
+
+      .invalid-feedback {
+        color: $error-color;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+    }
+
+    .alert-success {
+      background-color: rgba($success-color, 0.1);
+      color: $success-color;
+      padding: 0.75rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .alert-danger {
+      background-color: rgba($error-color, 0.1);
+      color: $error-color;
+      padding: 0.75rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+      background-color: $primary;
+      color: $card-background;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: darken($primary, 10%);
+      }
+
+      &:disabled {
+        background-color: lighten($primary, 20%);
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .error-message {
+    text-align: center;
+    padding: 2rem;
+    background-color: $card-background;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    p {
+      color: $card-text-color;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-secondary {
+      background-color: $secondary-color;
+      color: $card-background;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+  }
+}

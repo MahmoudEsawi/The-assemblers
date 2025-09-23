@@ -1,0 +1,33 @@
+<div class="service-assemblers-container">
+    <div *ngIf="service" class="service-header">
+      <div class="service-info">
+        <h1>{{ service.name }}</h1>
+        <p>{{ service.description }}</p>
+        <div class="service-meta">
+          <span class="service-category">{{ service.categoryName }}</span>
+          <span class="service-price">${{ service.price }}</span>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="assemblers.length > 0" class="assemblers-section">
+      <h2>Assemblers for this Service</h2>
+      <div class="assemblers-grid">
+        <app-assembler-card 
+          *ngFor="let assembler of assemblers" 
+          [assembler]="assembler"
+          (bookService)="bookService(assembler.id)"
+          (viewProfile)="viewAssemblerProfile(assembler.id)">
+        </app-assembler-card>
+      </div>
+    </div>
+  
+    <div *ngIf="assemblers.length === 0" class="no-results">
+      <p>No assemblers found for this service.</p>
+    </div>
+  
+    <div *ngIf="!service" class="error-message">
+      <p>Service not found.</p>
+      <button class="btn-secondary" routerLink="/services">Back to Services</button>
+    </div>
+  </div>

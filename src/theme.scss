@@ -1,0 +1,62 @@
+// Theme Variables
+$background-color: #121212;
+$text-color: #ffffff;
+$card-background: #ffffff;
+$card-text-color: #121212;
+$primary-color: #4a6baf;
+$secondary-color: #6c757d;
+$accent-color: #ffc107;
+$error-color: #dc3545;
+$success-color: #28a745;
+
+// Aliases for component styles
+$card-bg: $card-background;
+$text-light: #e0e0e0;
+$primary: $primary-color;
+$text-secondary: #a1a1a1;
+$accent: $accent-color;
+
+// Mixins
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: 769px) and (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 1025px) {
+    @content;
+  }
+}
+// Color variables
+$background-color: #121212;     // Dark background
+$text-color: #ffffff;           // White text
+$text-light: #e0e0e0;           // Light text
+$text-secondary: #a0a0a0;       // Secondary text
+$card-background: #ffffff;      // White card background
+$card-text-color: #121212;      // Dark text on cards
+$primary: #4a6baf;              // Primary blue
+$secondary-color: #6c757d;      // Secondary gray
+$accent: #ffc107;               // Accent yellow
+$error-color: #dc3545;          // Error red
+$success-color: #28a745;        // Success green
+$card-bg: #ffffff;              // Card background (white)
+
+// Breakpoints
+@mixin mobile {
+  @media (max-width: 768px) { @content; }
+}
+
+@mixin tablet {
+  @media (min-width: 769px) and (max-width: 1024px) { @content; }
+}
+
+@mixin desktop {
+  @media (min-width: 1025px) { @content; }
+}

@@ -1,0 +1,16 @@
+<div class="service-card">
+  <div class="service-image">
+    <img [src]="service.imageUrl" [alt]="service.name">
+  </div>
+  <div class="service-content">
+    <h3>{{ service.name }}</h3>
+    <p class="service-description">{{ service.description }}</p>
+    <div class="service-meta">
+      <span class="service-category">{{ service.categoryName }}</span>
+      <span class="service-price">${{ service.price }}</span>
+    </div>
+    <div class="service-actions">
+      <a [routerLink]="['/service-assemblers', service.id]" class="btn-secondary">View Assemblers</a>
+    </div>
+  </div>
+</div>

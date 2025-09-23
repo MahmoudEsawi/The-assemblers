@@ -1,0 +1,18 @@
+<div class="assembler-card">
+  <div class="assembler-image">
+    <img [src]="assembler.profileImage" [alt]="assembler.name">
+  </div>
+  <div class="assembler-content">
+    <h3>{{ assembler.name }}</h3>
+    <p class="assembler-specialization">{{ assembler.specialization }}</p>
+    <div class="assembler-rating">
+      <span class="stars">{{ getStarRating(assembler.averageRating) }}</span>
+      <span>{{ assembler.averageRating }}</span>
+    </div>
+    <p class="assembler-location">{{ assembler.location }}</p>
+    <div class="assembler-actions">
+      <button class="btn-primary" (click)="onBookService()">Book Service</button>
+      <button class="btn-secondary" (click)="onViewProfile()">View Profile</button>
+    </div>
+  </div>
+</div>
