@@ -39,132 +39,550 @@ export class MockDataService {
   private assemblers: Assembler[] = [
     {
       id: '1',
-      name: 'Jane Smith',
-      email: 'assembler@example.com',
+      name: 'Ahmed Hassan',
+      email: 'ahmed@example.com',
       password: 'password',
-      phone: '987-654-3210',
-      address: '456 Oak St, Town',
+      phone: '079-123-4567',
+      address: 'Amman, Jordan',
       role: 'assembler',
       createdAt: new Date('2023-01-15'),
       updatedAt: new Date('2023-01-15'),
-      specialization: 'PC Assembly & Repair',
-      description: 'Experienced technician with 10+ years in computer assembly and repair. Specializes in custom gaming PCs and data recovery.',
-      averageRating: 4.8,
-      profileImage: '/assets/assemblers/assembler1.jpg',
-      coverImage: '/assets/assemblers/assembler1-cover.jpg',
-      location: 'New York, NY',
-      isVerified: true
+      specialization: 'Plumbing & Water Systems',
+      description: 'Certified plumber with 15 years of experience in residential and commercial plumbing. Specializes in pipe installation, leak repair, and bathroom renovations.',
+      averageRating: 4.7,
+      profileImage: '/assets/assemblers/ahmed.jpg',
+      coverImage: '/assets/assemblers/ahmed-cover.jpg',
+      location: 'Amman, Jordan',
+      isVerified: true,
+      availability: {
+        monday: { start: '08:00', end: '17:00', available: true },
+        tuesday: { start: '08:00', end: '17:00', available: true },
+        wednesday: { start: '08:00', end: '17:00', available: true },
+        thursday: { start: '08:00', end: '17:00', available: true },
+        friday: { start: '08:00', end: '15:00', available: true },
+        saturday: { start: '09:00', end: '16:00', available: true },
+        sunday: { start: '09:00', end: '16:00', available: false }
+      }
     },
     {
       id: '2',
-      name: 'Mike Johnson',
-      email: 'mike@example.com',
+      name: 'Tariq Al-Mahmoud',
+      email: 'tariq@example.com',
       password: 'password',
-      phone: '555-123-4567',
-      address: '789 Pine St, Village',
+      phone: '079-234-5678',
+      address: 'Irbid, Jordan',
       role: 'assembler',
       createdAt: new Date('2023-02-10'),
       updatedAt: new Date('2023-02-10'),
-      specialization: 'Networking & Security',
-      description: 'Network specialist with expertise in home and office networking, security systems, and IT infrastructure.',
-      averageRating: 4.6,
-      profileImage: '/assets/assemblers/assembler2.jpg',
-      coverImage: '/assets/assemblers/assembler2-cover.jpg',
-      location: 'Los Angeles, CA',
-      isVerified: true
+      specialization: 'Electrical Work',
+      description: 'Licensed electrician with 12 years of experience in residential and commercial electrical work. Specializes in wiring, outlets, and electrical panel upgrades.',
+      averageRating: 4.8,
+      profileImage: '/assets/assemblers/tariq.jpg',
+      coverImage: '/assets/assemblers/tariq-cover.jpg',
+      location: 'Irbid, Jordan',
+      isVerified: true,
+      availability: {
+        monday: { start: '07:00', end: '16:00', available: true },
+        tuesday: { start: '07:00', end: '16:00', available: true },
+        wednesday: { start: '07:00', end: '16:00', available: true },
+        thursday: { start: '07:00', end: '16:00', available: true },
+        friday: { start: '07:00', end: '14:00', available: true },
+        saturday: { start: '08:00', end: '15:00', available: true },
+        sunday: { start: '08:00', end: '15:00', available: true }
+      }
     },
     {
       id: '3',
-      name: 'Sarah Williams',
-      email: 'sarah@example.com',
+      name: 'Omar Farouk',
+      email: 'omar@example.com',
       password: 'password',
-      phone: '555-987-6543',
-      address: '321 Elm St, Borough',
+      phone: '079-345-6789',
+      address: 'Zarqa, Jordan',
       role: 'assembler',
       createdAt: new Date('2023-03-05'),
       updatedAt: new Date('2023-03-05'),
-      specialization: 'Laptop Repair & Upgrades',
-      description: 'Specialist in laptop repair, upgrades, and maintenance. Quick turnaround and competitive prices.',
+      specialization: 'Painting & Decorating',
+      description: 'Professional painter with 12 years of experience. Interior and exterior painting, wallpapering, and decorative finishes for homes and businesses.',
       averageRating: 4.5,
-      profileImage: '/assets/assemblers/assembler3.jpg',
-      coverImage: '/assets/assemblers/assembler3-cover.jpg',
-      location: 'Chicago, IL',
-      isVerified: true
+      profileImage: '/assets/assemblers/omar.jpg',
+      coverImage: '/assets/assemblers/omar-cover.jpg',
+      location: 'Zarqa, Jordan',
+      isVerified: true,
+      availability: {
+        monday: { start: '08:00', end: '17:00', available: true },
+        tuesday: { start: '08:00', end: '17:00', available: true },
+        wednesday: { start: '08:00', end: '17:00', available: true },
+        thursday: { start: '08:00', end: '17:00', available: true },
+        friday: { start: '08:00', end: '15:00', available: true },
+        saturday: { start: '09:00', end: '16:00', available: true },
+        sunday: { start: '09:00', end: '16:00', available: false }
+      }
+    },
+    {
+      id: '4',
+      name: 'Mohammed Ali',
+      email: 'mohammed@example.com',
+      password: 'password',
+      phone: '079-456-7890',
+      address: 'Aqaba, Jordan',
+      role: 'assembler',
+      createdAt: new Date('2023-04-10'),
+      updatedAt: new Date('2023-04-10'),
+      specialization: 'Carpentry & Woodwork',
+      description: 'Master carpenter specializing in custom furniture, cabinet making, and home renovations. Attention to detail and quality craftsmanship guaranteed.',
+      averageRating: 4.9,
+      profileImage: '/assets/assemblers/mohammed.jpg',
+      coverImage: '/assets/assemblers/mohammed-cover.jpg',
+      location: 'Aqaba, Jordan',
+      isVerified: true,
+      availability: {
+        monday: { start: '08:00', end: '17:00', available: true },
+        tuesday: { start: '08:00', end: '17:00', available: true },
+        wednesday: { start: '08:00', end: '17:00', available: true },
+        thursday: { start: '08:00', end: '17:00', available: true },
+        friday: { start: '08:00', end: '15:00', available: true },
+        saturday: { start: '09:00', end: '16:00', available: true },
+        sunday: { start: '09:00', end: '16:00', available: false }
+      }
+    },
+    {
+      id: '5',
+      name: 'Youssef Khalid',
+      email: 'youssef@example.com',
+      password: 'password',
+      phone: '079-567-8901',
+      address: 'Salt, Jordan',
+      role: 'assembler',
+      createdAt: new Date('2023-05-05'),
+      updatedAt: new Date('2023-05-05'),
+      specialization: 'Flooring & Tiling',
+      description: 'Professional tiler with expertise in ceramic, porcelain, and stone tiles. Specializing in bathrooms, kitchens, and flooring installations.',
+      averageRating: 4.8,
+      profileImage: '/assets/assemblers/youssef.jpg',
+      coverImage: '/assets/assemblers/youssef-cover.jpg',
+      location: 'Salt, Jordan',
+      isVerified: true,
+      availability: {
+        monday: { start: '08:00', end: '17:00', available: true },
+        tuesday: { start: '08:00', end: '17:00', available: true },
+        wednesday: { start: '08:00', end: '17:00', available: true },
+        thursday: { start: '08:00', end: '17:00', available: true },
+        friday: { start: '08:00', end: '15:00', available: true },
+        saturday: { start: '09:00', end: '16:00', available: true },
+        sunday: { start: '09:00', end: '16:00', available: false }
+      }
+    },
+    {
+      id: '6',
+      name: 'Ibrahim Nasser',
+      email: 'ibrahim@example.com',
+      password: 'password',
+      phone: '079-678-9012',
+      address: 'Madaba, Jordan',
+      role: 'assembler',
+      createdAt: new Date('2023-06-15'),
+      updatedAt: new Date('2023-06-15'),
+      specialization: 'HVAC & Climate',
+      description: 'HVAC specialist with expertise in heating, ventilation, and air conditioning systems. Installation, repair, and maintenance services.',
+      averageRating: 4.6,
+      profileImage: '/assets/assemblers/ibrahim.jpg',
+      coverImage: '/assets/assemblers/ibrahim-cover.jpg',
+      location: 'Madaba, Jordan',
+      isVerified: true,
+      availability: {
+        monday: { start: '08:00', end: '17:00', available: true },
+        tuesday: { start: '08:00', end: '17:00', available: true },
+        wednesday: { start: '08:00', end: '17:00', available: true },
+        thursday: { start: '08:00', end: '17:00', available: true },
+        friday: { start: '08:00', end: '15:00', available: true },
+        saturday: { start: '09:00', end: '16:00', available: true },
+        sunday: { start: '09:00', end: '16:00', available: false }
+      }
+    },
+    {
+      id: '7',
+      name: 'Kamal Jamal',
+      email: 'kamal@example.com',
+      password: 'password',
+      phone: '079-789-0123',
+      address: 'Karak, Jordan',
+      role: 'assembler',
+      createdAt: new Date('2023-07-20'),
+      updatedAt: new Date('2023-07-20'),
+      specialization: 'Roofing & Gutters',
+      description: 'Professional roofer with expertise in all types of roofing materials, repairs, and gutter installation. Weatherproofing and maintenance services.',
+      averageRating: 4.7,
+      profileImage: '/assets/assemblers/kamal.jpg',
+      coverImage: '/assets/assemblers/kamal-cover.jpg',
+      location: 'Karak, Jordan',
+      isVerified: true,
+      availability: {
+        monday: { start: '08:00', end: '17:00', available: true },
+        tuesday: { start: '08:00', end: '17:00', available: true },
+        wednesday: { start: '08:00', end: '17:00', available: true },
+        thursday: { start: '08:00', end: '17:00', available: true },
+        friday: { start: '08:00', end: '15:00', available: true },
+        saturday: { start: '09:00', end: '16:00', available: true },
+        sunday: { start: '09:00', end: '16:00', available: false }
+      }
+    },
+    {
+      id: '8',
+      name: 'Nadia Khan',
+      email: 'nadia@example.com',
+      password: 'password',
+      phone: '079-890-1234',
+      address: 'Mafraq, Jordan',
+      role: 'assembler',
+      createdAt: new Date('2023-08-10'),
+      updatedAt: new Date('2023-08-10'),
+      specialization: 'Kitchen & Bathroom',
+      description: 'Specialist in kitchen and bathroom remodeling. Complete renovation services including plumbing, electrical, tiling, and fixture installation.',
+      averageRating: 4.8,
+      profileImage: '/assets/assemblers/nadia.jpg',
+      coverImage: '/assets/assemblers/nadia-cover.jpg',
+      location: 'Mafraq, Jordan',
+      isVerified: true,
+      availability: {
+        monday: { start: '08:00', end: '17:00', available: true },
+        tuesday: { start: '08:00', end: '17:00', available: true },
+        wednesday: { start: '08:00', end: '17:00', available: true },
+        thursday: { start: '08:00', end: '17:00', available: true },
+        friday: { start: '08:00', end: '15:00', available: true },
+        saturday: { start: '09:00', end: '16:00', available: true },
+        sunday: { start: '09:00', end: '16:00', available: false }
+      }
+    },
+    {
+      id: '9',
+      name: 'Zain Malik',
+      email: 'zain@example.com',
+      password: 'password',
+      phone: '079-901-2345',
+      address: 'Tafilah, Jordan',
+      role: 'assembler',
+      createdAt: new Date('2023-09-05'),
+      updatedAt: new Date('2023-09-05'),
+      specialization: 'Smart Home',
+      description: 'Smart home expert specializing in device installation, automation, and network integration. Create your intelligent living space.',
+      averageRating: 4.8,
+      profileImage: '/assets/assemblers/zain.jpg',
+      coverImage: '/assets/assemblers/zain-cover.jpg',
+      location: 'Tafilah, Jordan',
+      isVerified: true,
+      availability: {
+        monday: { start: '08:00', end: '17:00', available: true },
+        tuesday: { start: '08:00', end: '17:00', available: true },
+        wednesday: { start: '08:00', end: '17:00', available: true },
+        thursday: { start: '08:00', end: '17:00', available: true },
+        friday: { start: '08:00', end: '15:00', available: true },
+        saturday: { start: '09:00', end: '16:00', available: true },
+        sunday: { start: '09:00', end: '16:00', available: false }
+      }
+    },
+    {
+      id: '10',
+      name: 'Sami Al-Rashid',
+      email: 'sami@example.com',
+      password: 'password',
+      phone: '079-012-3456',
+      address: 'Ajloun, Jordan',
+      role: 'assembler',
+      createdAt: new Date('2023-10-15'),
+      updatedAt: new Date('2023-10-15'),
+      specialization: 'General Maintenance',
+      description: 'Experienced handyman providing general home repair and maintenance services. Door repairs, window fixes, minor plumbing, electrical work, and more.',
+      averageRating: 4.5,
+      profileImage: '/assets/assemblers/sami.jpg',
+      coverImage: '/assets/assemblers/sami-cover.jpg',
+      location: 'Ajloun, Jordan',
+      isVerified: true,
+      availability: {
+        monday: { start: '08:00', end: '17:00', available: true },
+        tuesday: { start: '08:00', end: '17:00', available: true },
+        wednesday: { start: '08:00', end: '17:00', available: true },
+        thursday: { start: '08:00', end: '17:00', available: true },
+        friday: { start: '08:00', end: '15:00', available: true },
+        saturday: { start: '09:00', end: '16:00', available: true },
+        sunday: { start: '09:00', end: '16:00', available: false }
+      }
     }
   ];
 
   private services: Service[] = [
+    // Plumbing & Water Services
     {
       id: '1',
-      name: 'Custom PC Assembly',
-      description: 'Professional assembly of custom-built computers tailored to your specific needs and budget.',
-      imageUrl: '/assets/services/custom-pc.jpg',
-      price: 99,
+      name: 'Plumbing Services',
+      description: 'Professional plumbing installation, repair, and maintenance for residential and commercial properties. Includes pipe fitting, faucet installation, leak repairs, water heater services, and drain cleaning.',
+      imageUrl: '/assets/services/plumbing.jpg',
+      price: 25,
       categoryId: '1',
-      categoryName: 'PC Assembly',
+      categoryName: 'Plumbing & Water',
       assemblerId: '1',
-      averageRating: 4.8,
-      reviewCount: 24
-    },
-    {
-      id: '2',
-      name: 'Gaming PC Setup',
-      description: 'Complete setup of high-performance gaming PCs with optimized cooling and RGB lighting.',
-      imageUrl: '/assets/services/gaming-pc.jpg',
-      price: 149,
-      categoryId: '1',
-      categoryName: 'PC Assembly',
-      assemblerId: '2',
       averageRating: 4.7,
-      reviewCount: 18
-    },
-    {
-      id: '3',
-      name: 'Laptop Repair',
-      description: 'Expert diagnosis and repair for all laptop brands and models, including screen and keyboard replacements.',
-      imageUrl: '/assets/services/laptop-repair.jpg',
-      price: 79,
-      categoryId: '2',
-      categoryName: 'Repair',
-      assemblerId: '3',
-      averageRating: 4.5,
       reviewCount: 32
     },
     {
-      id: '4',
-      name: 'Data Recovery',
-      description: 'Professional data recovery services from damaged hard drives, SSDs, and other storage devices.',
-      imageUrl: '/assets/services/data-recovery.jpg',
-      price: 129,
-      categoryId: '3',
-      categoryName: 'Data Services',
-      assemblerId: '1',
+      id: '13',
+      name: 'Water Heater Installation',
+      description: 'Professional water heater installation, repair, and maintenance. Gas and electric water heaters, tankless systems, and energy-efficient models.',
+      imageUrl: '/assets/services/water-heater.jpg',
+      price: 35,
+      categoryId: '1',
+      categoryName: 'Plumbing & Water',
+      assemblerId: '2',
+      averageRating: 4.8,
+      reviewCount: 18
+    },
+    {
+      id: '14',
+      name: 'Pipe Leak Repair',
+      description: 'Emergency pipe leak detection and repair services. Water damage prevention, pipe replacement, and plumbing system maintenance.',
+      imageUrl: '/assets/services/pipe-repair.jpg',
+      price: 20,
+      categoryId: '1',
+      categoryName: 'Plumbing & Water',
+      assemblerId: '3',
+      averageRating: 4.6,
+      reviewCount: 25
+    },
+    // Electrical Work Services
+    {
+      id: '2',
+      name: 'Electrical Work',
+      description: 'Licensed electrical services including outlet installation, lighting fixtures, circuit breaker repairs, electrical panel upgrades, and smart home wiring. All work meets safety standards.',
+      imageUrl: '/assets/services/electrical.jpg',
+      price: 30,
+      categoryId: '2',
+      categoryName: 'Electrical Work',
+      assemblerId: '4',
+      averageRating: 4.8,
+      reviewCount: 28
+    },
+    {
+      id: '15',
+      name: 'Lighting Installation',
+      description: 'Professional lighting installation including chandeliers, recessed lighting, outdoor lighting, and smart lighting systems.',
+      imageUrl: '/assets/services/lighting.jpg',
+      price: 25,
+      categoryId: '2',
+      categoryName: 'Electrical Work',
+      assemblerId: '5',
+      averageRating: 4.7,
+      reviewCount: 22
+    },
+    {
+      id: '16',
+      name: 'Electrical Panel Upgrade',
+      description: 'Electrical panel upgrades, circuit breaker installation, and electrical system modernization for improved safety and capacity.',
+      imageUrl: '/assets/services/electrical-panel.jpg',
+      price: 50,
+      categoryId: '2',
+      categoryName: 'Electrical Work',
+      assemblerId: '6',
       averageRating: 4.9,
       reviewCount: 15
     },
+    // Painting & Decorating Services
+    {
+      id: '3',
+      name: 'Painting Services',
+      description: 'Interior and exterior painting services with high-quality materials and professional finish. Includes color consultation, surface preparation, primer application, and cleanup.',
+      imageUrl: '/assets/services/painting.jpg',
+      price: 22,
+      categoryId: '3',
+      categoryName: 'Painting & Decorating',
+      assemblerId: '7',
+      averageRating: 4.5,
+      reviewCount: 35
+    },
+    {
+      id: '17',
+      name: 'Wallpaper Installation',
+      description: 'Professional wallpaper installation and removal services. Pattern matching, surface preparation, and seamless installation.',
+      imageUrl: '/assets/services/wallpaper.jpg',
+      price: 18,
+      categoryId: '3',
+      categoryName: 'Painting & Decorating',
+      assemblerId: '8',
+      averageRating: 4.4,
+      reviewCount: 12
+    },
+    // Carpentry & Woodwork Services
+    {
+      id: '4',
+      name: 'Carpentry Work',
+      description: 'Custom furniture making, installation, and repair services for all your woodworking needs. Includes custom shelving, cabinet installation, furniture assembly, and trim work.',
+      imageUrl: '/assets/services/carpentry.jpg',
+      price: 28,
+      categoryId: '4',
+      categoryName: 'Carpentry & Woodwork',
+      assemblerId: '9',
+      averageRating: 4.9,
+      reviewCount: 28
+    },
+    {
+      id: '18',
+      name: 'Cabinet Installation',
+      description: 'Professional cabinet installation and customization. Kitchen cabinets, bathroom vanities, and storage solutions.',
+      imageUrl: '/assets/services/cabinets.jpg',
+      price: 35,
+      categoryId: '4',
+      categoryName: 'Carpentry & Woodwork',
+      assemblerId: '10',
+      averageRating: 4.8,
+      reviewCount: 20
+    },
+    // Flooring & Tiling Services
     {
       id: '5',
-      name: 'Network Setup',
-      description: 'Home and office network installation, including routers, switches, and Wi-Fi optimization.',
-      imageUrl: '/assets/services/network-setup.jpg',
-      price: 89,
-      categoryId: '4',
-      categoryName: 'Networking',
-      assemblerId: '2',
-      averageRating: 4.6,
+      name: 'Tiling Services',
+      description: 'Professional tile installation for floors, walls, backsplashes, and bathrooms. Includes grouting, sealing, pattern design consultation, and waterproofing.',
+      imageUrl: '/assets/services/tiling.jpg',
+      price: 24,
+      categoryId: '5',
+      categoryName: 'Flooring & Tiling',
+      assemblerId: '1',
+      averageRating: 4.8,
       reviewCount: 21
     },
     {
+      id: '7',
+      name: 'Flooring Installation',
+      description: 'Professional flooring installation including hardwood, laminate, vinyl, and carpet. Includes subfloor preparation, underlayment, and finishing touches.',
+      imageUrl: '/assets/services/flooring.jpg',
+      price: 26,
+      categoryId: '5',
+      categoryName: 'Flooring & Tiling',
+      assemblerId: '2',
+      averageRating: 4.7,
+      reviewCount: 19
+    },
+    // HVAC & Climate Services
+    {
       id: '6',
-      name: 'Virus Removal',
-      description: 'Thorough virus and malware removal with system optimization and security recommendations.',
-      imageUrl: '/assets/services/virus-removal.jpg',
-      price: 69,
-      categoryId: '2',
-      categoryName: 'Repair',
+      name: 'HVAC Services',
+      description: 'Heating, ventilation, and air conditioning installation, repair, and maintenance. Includes ductwork, thermostat installation, system optimization, and filter replacement.',
+      imageUrl: '/assets/services/hvac.jpg',
+      price: 32,
+      categoryId: '6',
+      categoryName: 'HVAC & Climate',
+      assemblerId: '3',
+      averageRating: 4.6,
+      reviewCount: 24
+    },
+    {
+      id: '19',
+      name: 'Air Conditioning Repair',
+      description: 'AC unit repair, maintenance, and installation services. Emergency repairs, filter changes, and system optimization.',
+      imageUrl: '/assets/services/ac-repair.jpg',
+      price: 28,
+      categoryId: '6',
+      categoryName: 'HVAC & Climate',
+      assemblerId: '4',
+      averageRating: 4.7,
+      reviewCount: 16
+    },
+    // Roofing & Gutters Services
+    {
+      id: '8',
+      name: 'Roofing Services',
+      description: 'Complete roofing services including repairs, replacement, and maintenance. All types of roofing materials, weatherproofing solutions, and gutter installation.',
+      imageUrl: '/assets/services/roofing.jpg',
+      price: 40,
+      categoryId: '7',
+      categoryName: 'Roofing & Gutters',
+      assemblerId: '5',
+      averageRating: 4.8,
+      reviewCount: 16
+    },
+    {
+      id: '20',
+      name: 'Gutter Installation',
+      description: 'Gutter installation, repair, and maintenance services. Downspout installation, gutter cleaning, and water management solutions.',
+      imageUrl: '/assets/services/gutters.jpg',
+      price: 25,
+      categoryId: '7',
+      categoryName: 'Roofing & Gutters',
+      assemblerId: '6',
+      averageRating: 4.6,
+      reviewCount: 14
+    },
+    // Kitchen & Bathroom Services
+    {
+      id: '9',
+      name: 'Kitchen Remodeling',
+      description: 'Complete kitchen renovation services including cabinet installation, countertop fitting, appliance installation, plumbing connections, and electrical work.',
+      imageUrl: '/assets/services/kitchen.jpg',
+      price: 50,
+      categoryId: '8',
+      categoryName: 'Kitchen & Bathroom',
+      assemblerId: '7',
+      averageRating: 4.9,
+      reviewCount: 22
+    },
+    {
+      id: '10',
+      name: 'Bathroom Renovation',
+      description: 'Full bathroom remodeling including plumbing, electrical, tiling, and fixture installation. Complete design and installation services with waterproofing.',
+      imageUrl: '/assets/services/bathroom.jpg',
+      price: 43,
+      categoryId: '8',
+      categoryName: 'Kitchen & Bathroom',
+      assemblerId: '8',
+      averageRating: 4.7,
+      reviewCount: 18
+    },
+    // Smart Home Services
+    {
+      id: '12',
+      name: 'Smart Home Installation',
+      description: 'Smart home device installation and setup including smart lights, thermostats, security systems, home automation, and network configuration.',
+      imageUrl: '/assets/services/smart-home.jpg',
+      price: 30,
+      categoryId: '9',
+      categoryName: 'Smart Home',
+      assemblerId: '9',
+      averageRating: 4.8,
+      reviewCount: 14
+    },
+    {
+      id: '21',
+      name: 'Security System Installation',
+      description: 'Home security system installation including cameras, alarms, smart locks, and monitoring systems.',
+      imageUrl: '/assets/services/security.jpg',
+      price: 35,
+      categoryId: '9',
+      categoryName: 'Smart Home',
+      assemblerId: '10',
+      averageRating: 4.9,
+      reviewCount: 11
+    },
+    // General Maintenance Services
+    {
+      id: '11',
+      name: 'Furniture Assembly',
+      description: 'Professional furniture assembly services for all major brands. Includes delivery, assembly, setup in your home, and disposal of packaging materials.',
+      imageUrl: '/assets/services/furniture.jpg',
+      price: 15,
+      categoryId: '10',
+      categoryName: 'General Maintenance',
       assemblerId: '1',
-      averageRating: 4.4,
-      reviewCount: 27
+      averageRating: 4.6,
+      reviewCount: 41
+    },
+    {
+      id: '22',
+      name: 'Handyman Services',
+      description: 'General home repair and maintenance services. Door repairs, window fixes, minor plumbing, electrical work, and general maintenance tasks.',
+      imageUrl: '/assets/services/handyman.jpg',
+      price: 20,
+      categoryId: '10',
+      categoryName: 'General Maintenance',
+      assemblerId: '2',
+      averageRating: 4.5,
+      reviewCount: 35
     }
   ];
 
@@ -196,27 +614,63 @@ export class MockDataService {
   private categories: Category[] = [
     {
       id: '1',
-      name: 'PC Assembly',
-      description: 'Custom PC building and assembly services',
-      image: '/assets/categories/pc-assembly.jpg'
+      name: 'Plumbing & Water',
+      description: 'Pipe installation, leak repairs, water heater services',
+      image: '/assets/categories/plumbing.jpg'
     },
     {
       id: '2',
-      name: 'Repair',
-      description: 'Repair services for computers and laptops',
-      image: '/assets/categories/repair.jpg'
+      name: 'Electrical Work',
+      description: 'Wiring, outlets, lighting, electrical panel upgrades',
+      image: '/assets/categories/electrical.jpg'
     },
     {
       id: '3',
-      name: 'Data Services',
-      description: 'Data recovery and backup services',
-      image: '/assets/categories/data-services.jpg'
+      name: 'Painting & Decorating',
+      description: 'Interior and exterior painting, wallpapering',
+      image: '/assets/categories/painting.jpg'
     },
     {
       id: '4',
-      name: 'Networking',
-      description: 'Network setup and configuration services',
-      image: '/assets/categories/networking.jpg'
+      name: 'Carpentry & Woodwork',
+      description: 'Custom furniture, cabinet installation, wood repairs',
+      image: '/assets/categories/carpentry.jpg'
+    },
+    {
+      id: '5',
+      name: 'Flooring & Tiling',
+      description: 'Tile installation, flooring, grouting, sealing',
+      image: '/assets/categories/flooring.jpg'
+    },
+    {
+      id: '6',
+      name: 'HVAC & Climate',
+      description: 'Heating, ventilation, air conditioning, ductwork',
+      image: '/assets/categories/hvac.jpg'
+    },
+    {
+      id: '7',
+      name: 'Roofing & Gutters',
+      description: 'Roof repairs, gutter installation, weatherproofing',
+      image: '/assets/categories/roofing.jpg'
+    },
+    {
+      id: '8',
+      name: 'Kitchen & Bathroom',
+      description: 'Kitchen remodeling, bathroom renovation, fixtures',
+      image: '/assets/categories/kitchen.jpg'
+    },
+    {
+      id: '9',
+      name: 'Smart Home',
+      description: 'Smart device installation, home automation',
+      image: '/assets/categories/smart-home.jpg'
+    },
+    {
+      id: '10',
+      name: 'General Maintenance',
+      description: 'General home repairs, maintenance, handyman services',
+      image: '/assets/categories/maintenance.jpg'
     }
   ];
 
@@ -372,5 +826,6 @@ export class MockDataService {
 
     const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
     assembler.averageRating = Number((totalRating / reviews.length).toFixed(1));
+    // Note: reviewCount is not part of Assembler model, so we don't set it
   }
 }

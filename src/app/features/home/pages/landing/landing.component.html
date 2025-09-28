@@ -1,36 +1,95 @@
 <div class="landing-page">
-  <app-hero></app-hero>
-  
-  <section class="categories-section">
-    <div class="container">
-      <h2>Browse by Category</h2>
-      <app-category-list></app-category-list>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Find Professional Home Services</h1>
+      <p class="hero-subtitle">Connect with verified professionals for all your home improvement and maintenance needs</p>
+      <div class="hero-actions">
+        <button class="btn-primary btn-large" routerLink="/services">
+          <i class="icon-search"></i>
+          Browse Services
+        </button>
+        <button class="btn-secondary btn-large" routerLink="/register" [queryParams]="{role: 'assembler'}">
+          <i class="icon-user"></i>
+          Join as a Professional
+        </button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="/assets/hero-home.jpg" alt="Professional Home Services" onerror="this.src='/assets/services/placeholder.jpg'">
     </div>
   </section>
-  
-  <section class="services-section">
+
+  <!-- Services Preview Section -->
+  <section class="services-preview">
     <div class="container">
-      <h2>Popular Services</h2>
+      <div class="section-header">
+        <h2>Popular Home Services</h2>
+        <p>Get professional help for all your home improvement projects</p>
+      </div>
+      
       <div class="services-grid">
-        <app-service-card 
-          *ngFor="let service of popularServices" 
-          [service]="service">
-        </app-service-card>
+        <div class="service-preview-card" *ngFor="let service of popularServices" (click)="onServiceClick(service.id)">
+          <div class="service-image">
+            <img [src]="service.imageUrl" [alt]="service.name" onerror="this.src='/assets/services/placeholder.jpg'">
+          </div>
+          <div class="service-content">
+            <h3>{{ service.name }}</h3>
+            <p>{{ service.description }}</p>
+            <div class="service-meta">
+              <span class="rating">
+                <i class="icon-star"></i>
+                {{ service.averageRating }}
+              </span>
+              <span class="price">{{ service.price }} JD/hr</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="view-all-services">
+        <button class="btn-outline" routerLink="/services">
+          View All Services
+          <i class="icon-arrow-right"></i>
+        </button>
       </div>
     </div>
   </section>
-  
+
+  <!-- Featured Professionals Section -->
+  <section class="featured-professionals">
+    <div class="container">
+      <div class="section-header">
+        <h2>Featured Professionals</h2>
+        <p>Meet our top-rated assemblers and contractors</p>
+      </div>
+      
+      <div class="professionals-grid">
+        <app-assembler-card 
+          *ngFor="let assembler of featuredAssemblers" 
+          [assembler]="assembler"
+          (bookService)="onBookService($event)"
+          (viewProfile)="onViewProfile($event)">
+        </app-assembler-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
   <section class="cta-section">
     <div class="container">
-      <h2>Ready to Get Started?</h2>
-      <p>Join thousands of satisfied customers who trust The Assemblers</p>
-      <div class="cta-buttons">
-        <a routerLink="/register" class="btn btn-primary">Get Started</a>
-        <button class="btn btn-primary" routerLink="/services">Browse Services</button>
+      <div class="cta-content">
+        <h2>Ready to Get Started?</h2>
+        <p>Join thousands of satisfied customers who trust The Assemblers for their home improvement needs</p>
+        <div class="cta-actions">
+          <button class="btn-primary btn-large" routerLink="/services">
+            Find Services
+          </button>
+          <button class="btn-outline btn-large" routerLink="/register" [queryParams]="{role: 'assembler'}">
+            Become a Professional
+          </button>
+        </div>
       </div>
     </div>
   </section>
 </div>
-
-
-  

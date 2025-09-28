@@ -7,9 +7,10 @@
     <p class="service-description">{{ service.description }}</p>
     <div class="service-meta">
       <span class="service-category">{{ service.categoryName }}</span>
-      <span class="service-price">${{ service.price }}</span>
+      <span class="service-price">{{ service.price }} JD</span>
     </div>
     <div class="service-actions">
+      <button class="btn-primary" (click)="onBookService()">Book Service</button>
       <a [routerLink]="['/service-assemblers', service.id]" class="btn-secondary">View Assemblers</a>
     </div>
   </div>

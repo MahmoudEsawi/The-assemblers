@@ -1,89 +1,134 @@
 <div class="booking-container">
-    <div *ngIf="service" class="booking-card">
-      <div class="service-info">
-        <h2>Book Service: {{ service.name }}</h2>
-        <p>{{ service.description }}</p>
-        <div class="service-price">Price: ${{ service.price }}</div>
-      </div>
-  
-      <div *ngIf="assemblers.length > 0" class="assemblers-section">
-        <h3>Select an Assembler</h3>
-        <div class="assemblers-list">
-          <div 
-            *ngFor="let assembler of assemblers" 
-            class="assembler-item"
-            [ngClass]="{'selected': assembler.id === assemblerId}"
-            (click)="selectAssembler(assembler.id)"
-          >
-            <div class="assembler-info">
-              <img [src]="assembler.profileImage" [alt]="assembler.name" class="assembler-avatar">
-              <div>
-                <div class="assembler-name">{{ assembler.name }}</div>
-                <div class="assembler-specialization">{{ assembler.specialization }}</div>
-                <div class="assembler-rating">
-                  <span class="stars">{{ getStarRating(assembler.averageRating) }}</span>
-                  <span>{{ assembler.averageRating }} ({{ assembler.reviewCount }} reviews)</span>
-                </div>
+  <div *ngIf="service" class="booking-card">
+    <div class="service-info">
+      <h2>Book Service: {{ service.name }}</h2>
+      <p>{{ service.description }}</p>
+      <div class="service-price">Price: {{ service.price }} JD/hour</div>
+    </div>
+
+    <div *ngIf="assemblers.length > 0" class="assemblers-section">
+      <h3>Select an Assembler</h3>
+      <div class="assemblers-list">
+        <div 
+          *ngFor="let assembler of assemblers" 
+          class="assembler-item"
+          [ngClass]="{'selected': assembler.id === assemblerId}"
+          (click)="selectAssembler(assembler.id)"
+        >
+          <div class="assembler-info">
+            <img [src]="assembler.profileImage" [alt]="assembler.name" class="assembler-avatar">
+            <div>
+              <div class="assembler-name">{{ assembler.name }}</div>
+              <div class="assembler-specialization">{{ assembler.specialization }}</div>
+              <div class="assembler-rating">
+                <span class="stars">{{ getStarRating(assembler.averageRating) }}</span>
+                <span>{{ assembler.averageRating }}</span>
               </div>
+              <div class="assembler-location">{{ assembler.location }}</div>
+            </div>
+          </div>
+          <div class="assembler-availability" *ngIf="assembler.availability">
+            <div class="availability-status" [ngClass]="{'available': isAssemblerAvailable(assembler.id), 'busy': !isAssemblerAvailable(assembler.id)}">
+              {{ isAssemblerAvailable(assembler.id) ? 'Available' : 'Busy' }}
             </div>
           </div>
         </div>
       </div>
-  
-      <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="date">Date</label>
-          <input 
-            id="date" 
-            type="date" 
-            formControlName="date" 
-            class="form-control" 
-            [min]="getMinDate()"
-            [ngClass]="{'is-invalid': bookingForm.controls['date'].touched && bookingForm.controls['date'].invalid}"
+    </div>
+
+    <div *ngIf="selectedAssembler" class="calendar-section">
+      <h3>Select Date & Time</h3>
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <button (click)="previousMonth()" class="calendar-nav">‹</button>
+          <h4>{{ getCurrentMonthYear() }}</h4>
+          <button (click)="nextMonth()" class="calendar-nav">›</button>
+        </div>
+        <div class="calendar-grid">
+          <div class="calendar-day-header" *ngFor="let day of weekDays">{{ day }}</div>
+          <div 
+            *ngFor="let day of calendarDays" 
+            class="calendar-day"
+            [ngClass]="{
+              'disabled': !isDayAvailable(day),
+              'selected': isDaySelected(day),
+              'today': isToday(day)
+            }"
+            (click)="selectDate(day)"
           >
-          <div *ngIf="bookingForm.controls['date'].touched && bookingForm.controls['date'].invalid" class="invalid-feedback">
-            Date is required
+            {{ day.date }}
+            <div *ngIf="!isDayAvailable(day)" class="unavailable-indicator">Busy</div>
           </div>
         </div>
-  
-        <div class="form-group">
-          <label for="time">Time</label>
-          <input 
-            id="time" 
-            type="time" 
-            formControlName="time" 
-            class="form-control" 
-            [ngClass]="{'is-invalid': bookingForm.controls['time'].touched && bookingForm.controls['time'].invalid}"
+      </div>
+      
+      <div *ngIf="selectedDate" class="time-slots">
+        <h4>Available Time Slots</h4>
+        <div class="time-slots-grid">
+          <button 
+            *ngFor="let slot of availableTimeSlots" 
+            class="time-slot"
+            [ngClass]="{'selected': selectedTime === slot}"
+            (click)="selectTime(slot)"
           >
-          <div *ngIf="bookingForm.controls['time'].touched && bookingForm.controls['time'].invalid" class="invalid-feedback">
-            Time is required
-          </div>
+            {{ slot }}
+          </button>
         </div>
-  
-        <div class="form-group">
-          <label for="notes">Additional Notes (Optional)</label>
-          <textarea 
-            id="notes" 
-            formControlName="notes" 
-            class="form-control" 
-            rows="3"
-          ></textarea>
-        </div>
-  
-        <div *ngIf="successMessage" class="alert alert-success">
-          {{ successMessage }}
-        </div>
-  
-        <div *ngIf="errorMessage" class="alert alert-danger">
-          {{ errorMessage }}
-        </div>
-  
-        <button type="submit" class="btn-primary" [disabled]="bookingForm.invalid">Confirm Booking</button>
-      </form>
+      </div>
     </div>
-  
-    <div *ngIf="!service" class="error-message">
-      <p>Service not found.</p>
-      <button class="btn-secondary" routerLink="/services">Back to Services</button>
-    </div>
+
+    <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" *ngIf="selectedDate && selectedTime">
+      <div class="form-group">
+        <label for="notes">Additional Notes (Optional)</label>
+        <textarea 
+          id="notes" 
+          formControlName="notes" 
+          class="form-control" 
+          rows="3"
+          placeholder="Please describe any specific requirements or details..."
+        ></textarea>
+      </div>
+
+      <div class="booking-summary">
+        <h4>Booking Summary</h4>
+        <div class="summary-item">
+          <span>Service:</span>
+          <span>{{ service.name }}</span>
+        </div>
+        <div class="summary-item">
+          <span>Assembler:</span>
+          <span>{{ selectedAssembler?.name }}</span>
+        </div>
+        <div class="summary-item">
+          <span>Date:</span>
+          <span>{{ selectedDate | date:'fullDate' }}</span>
+        </div>
+        <div class="summary-item">
+          <span>Time:</span>
+          <span>{{ selectedTime }}</span>
+        </div>
+        <div class="summary-item">
+          <span>Price:</span>
+          <span>{{ service.price }} JD/hour</span>
+        </div>
+      </div>
+
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="bookingForm.invalid || !selectedDate || !selectedTime">
+        Confirm Booking
+      </button>
+    </form>
   </div>
+
+  <div *ngIf="!service" class="error-message">
+    <p>Service not found.</p>
+    <button class="btn-secondary" routerLink="/services">Back to Services</button>
+  </div>
+</div>

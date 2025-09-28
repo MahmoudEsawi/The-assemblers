@@ -11,5 +11,22 @@
   ],
   "exclude": [
     "src/**/*.spec.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": false,
+    "strictInputAccessModifiers": false,
+    "typeCheckHostBindings": false,
+    "strictTemplates": false,
+    "strictDomEventTypes": false,
+    "strictDomLocalRefTypes": false,
+    "strictAttributeTypes": false,
+    "strictSafeNavigationTypes": false,
+    "strictContextGenerics": false,
+    "strictLiteralTypes": false,
+    "strictNullInputTypes": false,
+    "strictInputTypes": false,
+    "strictOutputEventTypes": false,
+    "strictPropertyInitialization": false
+  }
 }

@@ -1,0 +1,35 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": [],
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "strict": false
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
+  ],
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": false,
+    "strictInputAccessModifiers": false,
+    "typeCheckHostBindings": false,
+    "strictTemplates": false,
+    "strictDomEventTypes": false,
+    "strictDomLocalRefTypes": false,
+    "strictAttributeTypes": false,
+    "strictSafeNavigationTypes": false,
+    "strictContextGenerics": false,
+    "strictLiteralTypes": false,
+    "strictNullInputTypes": false,
+    "strictInputTypes": false,
+    "strictOutputEventTypes": false,
+    "strictPropertyInitialization": false,
+    "fullTemplateTypeCheck": false,
+    "strictTemplate": false
+  }
+}

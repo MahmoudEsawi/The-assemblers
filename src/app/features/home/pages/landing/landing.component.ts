@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { HeroComponent } from '../../../../shared/components/hero/hero.component';
-import { CategoryListComponent } from '../../../../shared/components/category-list/category-list.component';
+import { Router, RouterModule } from '@angular/router';
 import { AssemblerCardComponent } from '../../../../shared/components/assembler-card/assembler-card.component';
-import { ServiceCardComponent } from '../../../../shared/components/service-card/service-card.component';
 import { MockDataService } from '../../../../core/services/mock-data.service';
+import { Service } from '../../../../core/models/service.model';
 
 @Component({
   selector: 'app-landing',
@@ -13,22 +11,39 @@ import { MockDataService } from '../../../../core/services/mock-data.service';
   imports: [
     CommonModule,
     RouterModule,
-    HeroComponent,
-    CategoryListComponent,
-    AssemblerCardComponent,
-    ServiceCardComponent
+    AssemblerCardComponent
   ],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
 export class LandingComponent implements OnInit {
   featuredAssemblers: any[] = [];
-  popularServices: any[] = [];
+  popularServices: Service[] = [];
 
-  constructor(private mockDataService: MockDataService) {}
+  constructor(
+    private mockDataService: MockDataService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.featuredAssemblers = this.mockDataService.getAssemblers().slice(0, 3);
+    this.featuredAssemblers = this.mockDataService.getAssemblers().slice(0, 6);
     this.popularServices = this.mockDataService.getServices().slice(0, 6);
+  }
+
+  onServiceClick(serviceId: string): void {
+    this.router.navigate(['/service-assemblers', serviceId]);
+  }
+
+  onBookService(assemblerId: string): void {
+    // Find a service for this assembler to book
+    const services = this.mockDataService.getServices();
+    const service = services.find(s => s.assemblerId === assemblerId);
+    if (service) {
+      this.router.navigate(['/booking', service.id, assemblerId]);
+    }
+  }
+
+  onViewProfile(assemblerId: string): void {
+    this.router.navigate(['/profile', assemblerId]);
   }
 }

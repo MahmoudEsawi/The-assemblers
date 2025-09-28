@@ -1,35 +1,44 @@
-@import '../../../../../theme';
+@use 'sass:color';
+@use '../../../../../theme' as *;
 
 .booking-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, $background-color 0%, color.adjust($background-color, $lightness: -3%) 100%);
+  padding: 2rem 1rem;
+  font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   .booking-card {
-    background-color: $card-background;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 1000px;
+    margin: 0 auto;
+    background: $card-background;
+    border-radius: 20px;
     padding: 2rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba($primary, 0.1);
 
     .service-info {
+      text-align: center;
       margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding-bottom: 2rem;
+      border-bottom: 2px solid rgba($primary, 0.1);
 
       h2 {
-        color: $primary;
-        margin-bottom: 0.75rem;
+        color: $card-text-color;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
       }
 
       p {
-        color: $card-text-color;
+        color: $text-secondary;
         margin-bottom: 1rem;
+        line-height: 1.6;
       }
 
       .service-price {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: $accent;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $primary;
       }
     }
 
@@ -37,29 +46,36 @@
       margin-bottom: 2rem;
 
       h3 {
-        color: $primary;
+        color: $card-text-color;
         margin-bottom: 1rem;
+        font-size: 1.3rem;
+        font-weight: 600;
       }
 
       .assemblers-list {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1rem;
 
         .assembler-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
           padding: 1rem;
-          border: 1px solid #e0e0e0;
-          border-radius: 8px;
+          border: 2px solid rgba($primary, 0.1);
+          border-radius: 12px;
           cursor: pointer;
-          transition: all 0.3s;
+          transition: all 0.3s ease;
 
           &:hover {
-            background-color: rgba($primary, 0.05);
+            border-color: $primary;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba($primary, 0.1);
           }
 
           &.selected {
             border-color: $primary;
-            background-color: rgba($primary, 0.1);
+            background: rgba($primary, 0.05);
           }
 
           .assembler-info {
@@ -77,25 +93,232 @@
             .assembler-name {
               font-weight: 600;
               color: $card-text-color;
+              margin-bottom: 0.25rem;
             }
 
             .assembler-specialization {
-              font-size: 0.9rem;
               color: $text-secondary;
+              font-size: 0.9rem;
+              margin-bottom: 0.25rem;
             }
 
             .assembler-rating {
               display: flex;
               align-items: center;
-              gap: 0.5rem;
-              font-size: 0.9rem;
-              color: $text-secondary;
+              gap: 0.25rem;
+              margin-bottom: 0.25rem;
 
               .stars {
                 color: $accent;
+                font-size: 0.9rem;
+              }
+
+              span:last-child {
+                color: $text-secondary;
+                font-size: 0.8rem;
+              }
+            }
+
+            .assembler-location {
+              color: $text-muted;
+              font-size: 0.8rem;
+            }
+          }
+
+          .assembler-availability {
+            .availability-status {
+              padding: 0.25rem 0.75rem;
+              border-radius: 20px;
+              font-size: 0.8rem;
+              font-weight: 600;
+
+              &.available {
+                background: rgba($success-color, 0.1);
+                color: $success-color;
+              }
+
+              &.busy {
+                background: rgba($error-color, 0.1);
+                color: $error-color;
               }
             }
           }
+        }
+      }
+    }
+
+    .calendar-section {
+      margin-bottom: 2rem;
+
+      h3 {
+        color: $card-text-color;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      .calendar-container {
+        background: rgba($background-color, 0.02);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+
+        .calendar-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+
+          h4 {
+            color: $card-text-color;
+            font-size: 1.2rem;
+            font-weight: 600;
+          }
+
+          .calendar-nav {
+            background: $primary;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: color.adjust($primary, $lightness: -10%);
+              transform: scale(1.1);
+            }
+          }
+        }
+
+        .calendar-grid {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 0.5rem;
+
+          .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            color: $text-secondary;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+          }
+
+          .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+
+            &:hover:not(.disabled) {
+              background: rgba($primary, 0.1);
+            }
+
+            &.selected {
+              background: $primary;
+              color: white;
+            }
+
+            &.today {
+              background: rgba($accent, 0.2);
+              color: $accent;
+              font-weight: 700;
+            }
+
+            &.disabled {
+              color: $text-muted;
+              cursor: not-allowed;
+              opacity: 0.5;
+
+              .unavailable-indicator {
+                font-size: 0.6rem;
+                color: $error-color;
+                font-weight: 600;
+              }
+            }
+
+            &:not(.isCurrentMonth) {
+              color: $text-muted;
+              opacity: 0.5;
+            }
+          }
+        }
+      }
+
+      .time-slots {
+        h4 {
+          color: $card-text-color;
+          margin-bottom: 1rem;
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+
+        .time-slots-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+          gap: 0.5rem;
+
+          .time-slot {
+            padding: 0.75rem;
+            border: 2px solid rgba($primary, 0.2);
+            background: transparent;
+            color: $card-text-color;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+
+            &:hover {
+              border-color: $primary;
+              background: rgba($primary, 0.1);
+            }
+
+            &.selected {
+              background: $primary;
+              color: white;
+              border-color: $primary;
+            }
+          }
+        }
+      }
+    }
+
+    .booking-summary {
+      background: rgba($primary, 0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+
+      h4 {
+        color: $card-text-color;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+
+        span:first-child {
+          color: $text-secondary;
+          font-weight: 500;
+        }
+
+        span:last-child {
+          color: $card-text-color;
+          font-weight: 600;
         }
       }
     }
@@ -107,98 +330,142 @@
         display: block;
         margin-bottom: 0.5rem;
         color: $card-text-color;
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 0.95rem;
       }
 
       .form-control {
         width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        background-color: $background-color;
-        color: $text-color;
-        transition: border-color 0.3s;
+        padding: 1rem;
+        border: 2px solid rgba($primary, 0.1);
+        border-radius: 12px;
+        font-size: 1rem;
+        background: rgba($background-color, 0.02);
+        color: $card-text-color;
+        transition: all 0.3s ease;
+        font-family: inherit;
 
         &:focus {
           outline: none;
           border-color: $primary;
-          box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+          box-shadow: 0 0 0 3px rgba($primary, 0.1);
+          background: $card-background;
         }
 
-        &.is-invalid {
-          border-color: $error-color;
+        &::placeholder {
+          color: $text-muted;
         }
       }
+    }
 
-      .invalid-feedback {
+    .alert {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+
+      &.alert-success {
+        background: rgba($success-color, 0.1);
+        color: $success-color;
+        border: 1px solid rgba($success-color, 0.2);
+      }
+
+      &.alert-danger {
+        background: rgba($error-color, 0.1);
         color: $error-color;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
+        border: 1px solid rgba($error-color, 0.2);
       }
-    }
-
-    .alert-success {
-      background-color: rgba($success-color, 0.1);
-      color: $success-color;
-      padding: 0.75rem;
-      border-radius: 4px;
-      margin-bottom: 1rem;
-    }
-
-    .alert-danger {
-      background-color: rgba($error-color, 0.1);
-      color: $error-color;
-      padding: 0.75rem;
-      border-radius: 4px;
-      margin-bottom: 1rem;
     }
 
     .btn-primary {
-      background-color: $primary;
-      color: $card-background;
+      width: 100%;
+      padding: 1rem 2rem;
+      background: $gradient-primary;
+      color: white;
       border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
+      border-radius: 12px;
+      font-size: 1.1rem;
       font-weight: 600;
       cursor: pointer;
-      width: 100%;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      font-family: inherit;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      &:hover::before {
+        left: 100%;
+      }
 
       &:hover {
-        background-color: darken($primary, 10%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba($primary, 0.3);
       }
 
       &:disabled {
-        background-color: lighten($primary, 20%);
+        opacity: 0.6;
         cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    .btn-secondary {
+      background: $secondary-color;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: color.adjust($secondary-color, $lightness: -10%);
+        transform: translateY(-2px);
       }
     }
   }
 
   .error-message {
     text-align: center;
-    padding: 2rem;
-    background-color: $card-background;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 3rem;
+    background: $card-background;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 
     p {
       color: $card-text-color;
       margin-bottom: 1.5rem;
+      font-size: 1.1rem;
     }
+  }
+}
 
-    .btn-secondary {
-      background-color: $secondary-color;
-      color: $card-background;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.3s;
+// Responsive design
+@include mobile {
+  .booking-container {
+    padding: 1rem;
 
-      &:hover {
-        background-color: darken($secondary-color, 10%);
+    .booking-card {
+      padding: 1.5rem;
+
+      .assemblers-section .assemblers-list {
+        grid-template-columns: 1fr;
+      }
+
+      .calendar-section .time-slots .time-slots-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
       }
     }
   }

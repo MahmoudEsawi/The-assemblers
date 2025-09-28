@@ -1,36 +1,95 @@
-<section class="services-section">
-  <div class="container">
-    <h1 class="section-title">Our Services</h1>
-    
-    <div class="services-grid">
-      <div class="service-card">
-        <i class="fas fa-tools"></i>
-        <h3>Assembly Services</h3>
-        <p>Professional furniture assembly for your home or office</p>
-      </div>
+<div class="services-container">
+  <div class="services-header">
+    <h1>Professional Home Services</h1>
+    <p>Expert assemblers and contractors for all your home improvement needs</p>
+  </div>
 
-      <div class="service-card">
-        <i class="fas fa-home"></i>
-        <h3>Home Installation</h3>
-        <p>Expert installation of home fixtures and accessories</p>
-      </div>
-
-      <div class="service-card">
-        <i class="fas fa-truck"></i>
-        <h3>Delivery & Setup</h3>
-        <p>Convenient delivery and complete setup services</p>
-      </div>
-
-      <div class="service-card">
-        <i class="fas fa-hammer"></i>
-        <h3>Custom Solutions</h3>
-        <p>Customized assembly solutions for unique needs</p>
+  <!-- Search and Filter Section -->
+  <div class="search-filter-section">
+    <div class="search-bar">
+      <div class="search-input-container">
+        <i class="icon-search"></i>
+        <input 
+          type="text" 
+          placeholder="Search services..." 
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          class="search-input">
       </div>
     </div>
 
-    <div class="cta-section">
-      <h2>Ready to get started?</h2>
-      <button class="cta-button">Book Now</button>
+    <div class="filters">
+      <div class="category-filters">
+        <h3>Categories</h3>
+        <div class="category-buttons">
+          <button 
+            class="category-btn" 
+            [class.active]="selectedCategory === 'all'"
+            (click)="onCategorySelect('all')">
+            All Services
+          </button>
+          <button 
+            *ngFor="let category of categories" 
+            class="category-btn"
+            [class.active]="selectedCategory === category.id"
+            (click)="onCategorySelect(category.id)">
+            {{ category.name }}
+          </button>
+        </div>
+      </div>
+
+      <div class="sort-filters">
+        <h3>Sort By</h3>
+        <select [(ngModel)]="sortBy" (change)="onSortChange()" class="sort-select">
+          <option value="name">Name (A-Z)</option>
+          <option value="price-low">Price (Low to High)</option>
+          <option value="price-high">Price (High to Low)</option>
+          <option value="rating">Rating (High to Low)</option>
+        </select>
+      </div>
     </div>
   </div>
-</section>
+
+  <!-- Results Count -->
+  <div class="results-info">
+    <p>{{ filteredServices.length }} service{{ filteredServices.length !== 1 ? 's' : '' }} found</p>
+  </div>
+
+  <!-- Services Grid -->
+  <div class="services-grid">
+    <div 
+      *ngFor="let service of filteredServices" 
+      class="service-card"
+      (click)="onServiceClick(service.id)">
+      <div class="service-image">
+        <img [src]="service.imageUrl" [alt]="service.name" onerror="this.src='/assets/services/placeholder.jpg'">
+        <div class="service-category-badge">{{ service.categoryName }}</div>
+      </div>
+      <div class="service-content">
+        <h3>{{ service.name }}</h3>
+        <p class="service-description">{{ service.description }}</p>
+        <div class="service-meta">
+          <div class="service-rating">
+            <span class="stars">{{ getStarRating(service.averageRating || 0) }}</span>
+            <span class="rating-text">{{ service.averageRating }} ({{ service.reviewCount }} reviews)</span>
+          </div>
+          <div class="service-price">{{ service.price }} JD/hour</div>
+        </div>
+        <div class="service-actions">
+          <button class="btn-primary" (click)="onServiceClick(service.id); $event.stopPropagation()">
+            View Assemblers
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="filteredServices.length === 0" class="no-services">
+    <div class="no-services-content">
+      <i class="icon-search-large"></i>
+      <h3>No services found</h3>
+      <p>Try adjusting your search or filter criteria</p>
+      <button class="btn-secondary" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+</div>

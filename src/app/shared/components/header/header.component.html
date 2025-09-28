@@ -1,24 +1,60 @@
-<header class="header">
+<header class="header" [ngClass]="{'scrolled': isScrolled}">
   <div class="container">
     <div class="header-content">
       <div class="logo">
-        <a routerLink="/">The Assemblers</a>
+        <a routerLink="/" (click)="closeMobileMenu()">The Assemblers</a>
       </div>
       
-      <nav class="nav">
-        <ul>
-          <li><a routerLink="/">Home</a></li>
-          <li><a routerLink="/services">Services</a></li>
+      <!-- Mobile Menu Toggle -->
+      <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" [attr.aria-expanded]="isMobileMenuOpen">
+        <span class="hamburger" [ngClass]="{'active': isMobileMenuOpen}">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+      
+      <nav class="nav" [ngClass]="{'mobile-open': isMobileMenuOpen}">
+        <ul [ngClass]="{'mobile-menu': isMobileMenuOpen}">
+          <li>
+            <a routerLink="/" 
+               [class.active]="currentRoute === '/'"
+               (click)="closeMobileMenu()">
+              Home
+            </a>
+          </li>
+          <li>
+            <a routerLink="/services" 
+               [class.active]="currentRoute.startsWith('/services')"
+               (click)="closeMobileMenu()">
+              Services
+            </a>
+          </li>
+          <li>
+            <a routerLink="/assemblers" 
+               [class.active]="currentRoute.startsWith('/assemblers')"
+               (click)="closeMobileMenu()">
+              Assemblers
+            </a>
+          </li>
           <li *ngIf="!authService.isAuthenticated()">
-            <a routerLink="/login">Login</a>
+            <a routerLink="/login" 
+               [class.active]="currentRoute.startsWith('/login')"
+               (click)="closeMobileMenu()">
+              Login
+            </a>
           </li>
           <li *ngIf="authService.isAuthenticated()">
-            <a [routerLink]="authService.hasRole('customer') ? '/dashboard-customer' : '/dashboard-assembler'">
+            <a [routerLink]="authService.hasRole('customer') ? '/dashboard-customer' : '/dashboard-assembler'"
+               [class.active]="currentRoute.startsWith('/dashboard')"
+               (click)="closeMobileMenu()">
               Dashboard
             </a>
           </li>
           <li *ngIf="authService.isAuthenticated()">
-            <a (click)="authService.logout()">Logout</a>
+            <a (click)="onLogout()" class="logout-link">
+              Logout
+            </a>
           </li>
         </ul>
       </nav>

@@ -1,46 +1,65 @@
-@import '../../../../../theme';
+@use 'sass:color';
+@use '../../../../../theme' as *;
 
 .service-assemblers-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem;
+  color: $text-light;
 
   .service-header {
     background-color: $card-background;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
     padding: 2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
     .service-info {
       h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
         color: $primary;
-        margin-bottom: 0.75rem;
+        font-weight: 700;
+
+        @include mobile {
+          font-size: 2rem;
+        }
       }
 
-      p {
-        color: $card-text-color;
-        margin-bottom: 1.5rem;
+      .service-description {
+        font-size: 1.1rem;
+        color: $text-secondary;
         line-height: 1.6;
+        margin-bottom: 1.5rem;
       }
 
       .service-meta {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
 
-        .service-category {
-          background-color: $primary;
-          color: $card-background;
-          padding: 0.5rem 1rem;
-          border-radius: 20px;
-          font-weight: 500;
+        .service-rating {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          .stars {
+            color: $accent;
+            font-size: 1.2rem;
+          }
+
+          .rating-text {
+            color: $text-secondary;
+            font-size: 1rem;
+          }
         }
 
         .service-price {
           font-size: 1.5rem;
-          font-weight: bold;
-          color: $accent;
+          font-weight: 700;
+          color: $primary;
         }
       }
     }
@@ -48,54 +67,59 @@
 
   .assemblers-section {
     h2 {
-      color: $primary;
-      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: $text-color;
+      font-weight: 600;
+
+      @include mobile {
+        font-size: 1.5rem;
+      }
+    }
+
+    .section-description {
+      font-size: 1.1rem;
+      color: $text-secondary;
+      margin-bottom: 2rem;
     }
 
     .assemblers-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
+      gap: 2rem;
+
+      @include mobile {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
     }
-  }
 
-  .no-results {
-    text-align: center;
-    padding: 3rem;
-    background-color: $card-background;
-    border-radius: 8px;
-    margin-top: 2rem;
-
-    p {
-      font-size: 1.1rem;
-      color: $text-secondary;
-    }
-  }
-
-  .error-message {
-    text-align: center;
-    padding: 2rem;
-    background-color: $card-background;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-
-    p {
+    .no-assemblers {
+      text-align: center;
+      padding: 3rem;
+      background-color: $card-background;
+      border-radius: 12px;
       color: $card-text-color;
-      margin-bottom: 1.5rem;
-    }
 
-    .btn-secondary {
-      background-color: $secondary-color;
-      color: $card-background;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.3s;
+      p {
+        font-size: 1.1rem;
+        color: $text-secondary;
+        margin-bottom: 1.5rem;
+      }
 
-      &:hover {
-        background-color: darken($secondary-color, 10%);
+      .btn-secondary {
+        background-color: $secondary-color;
+        color: $card-background;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: color.adjust($secondary-color, $lightness: -10%);
+        }
       }
     }
   }

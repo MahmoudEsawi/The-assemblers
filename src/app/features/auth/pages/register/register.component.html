@@ -101,9 +101,9 @@
             type="text" 
             formControlName="specialization" 
             class="form-control" 
-            [ngClass]="{'is-invalid': registerForm.controls['specialization']?.touched && registerForm.controls['specialization']?.invalid}"
+            [ngClass]="{'is-invalid': registerForm.controls['specialization'].touched && registerForm.controls['specialization'].invalid}"
           >
-          <div *ngIf="registerForm.controls['specialization']?.touched && registerForm.controls['specialization']?.invalid" class="invalid-feedback">
+          <div *ngIf="registerForm.controls['specialization'].touched && registerForm.controls['specialization'].invalid" class="invalid-feedback">
             Specialization is required
           </div>
         </div>
@@ -115,9 +115,9 @@
             formControlName="description" 
             class="form-control" 
             rows="3"
-            [ngClass]="{'is-invalid': registerForm.controls['description']?.touched && registerForm.controls['description']?.invalid}"
+            [ngClass]="{'is-invalid': registerForm.controls['description'].touched && registerForm.controls['description'].invalid}"
           ></textarea>
-          <div *ngIf="registerForm.controls['description']?.touched && registerForm.controls['description']?.invalid" class="invalid-feedback">
+          <div *ngIf="registerForm.controls['description'].touched && registerForm.controls['description'].invalid" class="invalid-feedback">
             Description is required
           </div>
         </div>
@@ -129,9 +129,9 @@
             type="text" 
             formControlName="location" 
             class="form-control" 
-            [ngClass]="{'is-invalid': registerForm.controls['location']?.touched && registerForm.controls['location']?.invalid}"
+            [ngClass]="{'is-invalid': registerForm.controls['location'].touched && registerForm.controls['location'].invalid}"
           >
-          <div *ngIf="registerForm.controls['location']?.touched && registerForm.controls['location']?.invalid" class="invalid-feedback">
+          <div *ngIf="registerForm.controls['location'].touched && registerForm.controls['location'].invalid" class="invalid-feedback">
             Location is required
           </div>
         </div>

@@ -1,0 +1,65 @@
+<div class="assemblers-container">
+  <div class="assemblers-header">
+    <h1>Professional Assemblers</h1>
+    <p>Meet our verified home service professionals across Jordan</p>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="search-filter-section">
+    <div class="search-bar">
+      <div class="search-input-container">
+        <i class="icon-search"></i>
+        <input
+          type="text"
+          placeholder="Search assemblers..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          class="search-input">
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="specialization-filters">
+        <h3>Specialization</h3>
+        <select [(ngModel)]="selectedSpecialization" (change)="onSpecializationChange()" class="specialization-select">
+          <option value="all">All Specializations</option>
+          <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+        </select>
+      </div>
+
+      <div class="sort-filters">
+        <h3>Sort By</h3>
+        <select [(ngModel)]="sortBy" (change)="onSortChange()" class="sort-select">
+          <option value="name">Name (A-Z)</option>
+          <option value="rating">Rating (High to Low)</option>
+          <option value="location">Location (A-Z)</option>
+          <option value="specialization">Specialization (A-Z)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Count -->
+  <div class="results-info">
+    <p>{{ filteredAssemblers.length }} assembler{{ filteredAssemblers.length !== 1 ? 's' : '' }} found</p>
+  </div>
+
+  <!-- Assemblers Grid -->
+  <div class="assemblers-grid">
+    <app-assembler-card
+      *ngFor="let assembler of filteredAssemblers"
+      [assembler]="assembler"
+      (bookService)="onBookService($event)"
+      (viewProfile)="onViewProfile($event)">
+    </app-assembler-card>
+  </div>
+
+  <div *ngIf="filteredAssemblers.length === 0" class="no-assemblers">
+    <div class="no-assemblers-content">
+      <i class="icon-search-large"></i>
+      <h3>No assemblers found</h3>
+      <p>Try adjusting your search or filter criteria</p>
+      <button class="btn-secondary" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+</div>

@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --disable-host-check",
+    "start:no-lint": "ng serve --disable-host-check --skip-nx-cache",
     "build": "ng build",
+    "build:no-lint": "ng build --skip-nx-cache",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

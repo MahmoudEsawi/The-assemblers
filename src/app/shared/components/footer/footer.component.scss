@@ -1,4 +1,4 @@
-@import '../../../../theme';
+@use '../../../../theme' as *;
 
 .footer {
   background-color: rgba($card-background, 0.05);
