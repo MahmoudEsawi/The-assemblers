@@ -226,4 +226,20 @@ export class BookingComponent implements OnInit {
     
     return '★'.repeat(fullStars) + (halfStar ? '☆' : '') + '☆'.repeat(emptyStars);
   }
+
+  goBack(): void {
+    if (this.selectedTime) {
+      this.selectedTime = null;
+    } else if (this.selectedDate) {
+      this.selectedDate = null;
+    } else if (this.selectedAssembler) {
+      this.selectedAssembler = null;
+      this.assemblerId = null;
+    }
+  }
+
+  retryBooking(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
 }

@@ -1,0 +1,59 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <div class="user-info">
+      <div class="user-avatar">
+        <img [src]="'assets/default-avatar.png'" [alt]="receiverName">
+        <div class="online-indicator" [class.online]="isOnline"></div>
+      </div>
+      <div class="user-details">
+        <h3>{{ receiverName }}</h3>
+        <span class="status" [class.online]="isOnline">
+          {{ isOnline ? 'Online' : 'Offline' }}
+        </span>
+      </div>
+    </div>
+    <button class="close-btn" (click)="close()">×</button>
+  </div>
+
+  <div class="chat-messages" #messagesContainer>
+    <div *ngFor="let message of messages" 
+         class="message" 
+         [class.my-message]="isMyMessage(message)"
+         [class.other-message]="!isMyMessage(message)">
+      
+      <div class="message-content">
+        <div class="message-bubble">
+          <p>{{ message.message }}</p>
+          <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="isTyping" class="typing-indicator">
+      <div class="typing-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <span class="typing-text">{{ receiverName }} is typing...</span>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <div class="input-container">
+      <textarea 
+        [(ngModel)]="newMessage"
+        (keypress)="onKeyPress($event)"
+        placeholder="Type your message..."
+        class="message-input"
+        rows="1">
+      </textarea>
+      <button 
+        (click)="sendMessage()" 
+        [disabled]="!newMessage.trim()"
+        class="send-btn">
+        <i class="send-icon">📤</i>
+      </button>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ export interface User {
   password: string;
   phone?: string;
   address?: string;
+  profileImage?: string;
   role: 'customer' | 'assembler';
   createdAt: Date;
   updatedAt: Date;

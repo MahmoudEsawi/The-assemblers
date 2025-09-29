@@ -11,6 +11,12 @@ import { ServiceService } from './core/services/service.service';
 import { AssemblerService } from './core/services/assembler.service';
 import { BookingService } from './core/services/booking.service';
 import { ReviewService } from './core/services/review.service';
+import { ChatService } from './core/services/chat.service';
+import { RealtimeService } from './core/services/realtime.service';
+import { LocationService } from './core/services/location.service';
+import { ImageUploadService } from './core/services/image-upload.service';
+import { NotificationService } from './core/services/notification.service';
+import { SeoService } from './core/services/seo.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,6 +30,12 @@ export const appConfig: ApplicationConfig = {
     ServiceService,
     AssemblerService,
     BookingService,
-    ReviewService
+    ReviewService,
+    ChatService,
+    RealtimeService,
+    LocationService,
+    ImageUploadService,
+    NotificationService,
+    SeoService
   ]
 };

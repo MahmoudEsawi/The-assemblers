@@ -1,0 +1,375 @@
+@use 'sass:color';
+@use '../../../../theme' as *;
+
+.advanced-search-container {
+  background: $surface-1;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+
+  .search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $surface-2;
+
+    h3 {
+      margin: 0;
+      color: $primary;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .clear-filters-btn {
+      background: none;
+      border: 1px solid $text-secondary;
+      color: $text-secondary;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: $text-secondary;
+        color: white;
+      }
+    }
+  }
+
+  .search-filters {
+    display: grid;
+    gap: 1.5rem;
+
+    .filter-group {
+      .filter-label {
+        display: block;
+        font-weight: 600;
+        color: $text-color;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+      }
+
+      .location-options {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+
+        .radio-option {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+
+          input[type="radio"] {
+            margin: 0;
+          }
+
+          .radio-text {
+            font-size: 0.9rem;
+            color: $text-color;
+          }
+        }
+      }
+
+      .current-location {
+        padding: 0.75rem;
+        background: $surface-0;
+        border-radius: 8px;
+        border: 1px solid $surface-2;
+        margin-bottom: 1rem;
+
+        .loading-location {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: $text-secondary;
+
+          .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid $surface-2;
+            border-top: 2px solid $primary;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          }
+        }
+
+        .location-info {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: $success-color;
+
+          .location-icon {
+            font-size: 1rem;
+          }
+        }
+
+        .no-location {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: $error-color;
+
+          .warning-icon {
+            font-size: 1rem;
+          }
+        }
+      }
+
+      .custom-address {
+        margin-bottom: 1rem;
+
+        .address-input {
+          width: 100%;
+          padding: 0.75rem;
+          border: 1px solid $surface-2;
+          border-radius: 8px;
+          background: $surface-0;
+          color: $text-color;
+          font-size: 0.9rem;
+
+          &:focus {
+            outline: none;
+            border-color: $primary;
+            box-shadow: 0 0 0 2px rgba($primary, 0.2);
+          }
+        }
+      }
+
+      .radius-slider {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        label {
+          font-size: 0.9rem;
+          color: $text-secondary;
+        }
+
+        .radius-range {
+          width: 100%;
+          height: 6px;
+          border-radius: 3px;
+          background: $surface-2;
+          outline: none;
+          -webkit-appearance: none;
+
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: $primary;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba($primary, 0.3);
+          }
+
+          &::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: $primary;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba($primary, 0.3);
+          }
+        }
+      }
+
+      .price-range {
+        .price-inputs {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.75rem;
+
+          .price-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid $surface-2;
+            border-radius: 6px;
+            background: $surface-0;
+            color: $text-color;
+            font-size: 0.9rem;
+            text-align: center;
+
+            &:focus {
+              outline: none;
+              border-color: $primary;
+            }
+          }
+
+          .price-separator {
+            color: $text-secondary;
+            font-weight: 500;
+          }
+        }
+
+        .price-slider {
+          position: relative;
+          height: 6px;
+          background: $surface-2;
+          border-radius: 3px;
+
+          .price-range-slider {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 6px;
+            background: transparent;
+            outline: none;
+            -webkit-appearance: none;
+
+            &::-webkit-slider-thumb {
+              -webkit-appearance: none;
+              appearance: none;
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              background: $primary;
+              cursor: pointer;
+              box-shadow: 0 2px 4px rgba($primary, 0.3);
+            }
+
+            &::-moz-range-thumb {
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              background: $primary;
+              cursor: pointer;
+              border: none;
+              box-shadow: 0 2px 4px rgba($primary, 0.3);
+            }
+          }
+        }
+      }
+
+      .rating-filter {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .rating-stars {
+          display: flex;
+          gap: 0.25rem;
+
+          .star {
+            font-size: 1.2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+
+            &.active {
+              color: $accent;
+            }
+
+            &:hover {
+              color: $accent;
+            }
+          }
+        }
+
+        .rating-text {
+          font-size: 0.9rem;
+          color: $text-secondary;
+        }
+      }
+
+      .service-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid $surface-2;
+        border-radius: 8px;
+        background: $surface-0;
+        color: $text-color;
+        font-size: 0.9rem;
+        cursor: pointer;
+
+        &:focus {
+          outline: none;
+          border-color: $primary;
+          box-shadow: 0 0 0 2px rgba($primary, 0.2);
+        }
+      }
+
+      .checkbox-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+
+        input[type="checkbox"] {
+          margin: 0;
+        }
+
+        .checkbox-text {
+          font-size: 0.9rem;
+          color: $text-color;
+        }
+      }
+
+      .sort-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+
+        .radio-option {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+
+          input[type="radio"] {
+            margin: 0;
+          }
+
+          .radio-text {
+            font-size: 0.9rem;
+            color: $text-color;
+          }
+        }
+      }
+    }
+  }
+
+  .search-summary {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid $surface-2;
+    text-align: center;
+
+    p {
+      margin: 0;
+      color: $text-secondary;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Mobile responsiveness
+@include mobile {
+  .advanced-search-container {
+    padding: 1rem;
+
+    .search-filters {
+      gap: 1rem;
+
+      .filter-group {
+        .sort-options {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+}

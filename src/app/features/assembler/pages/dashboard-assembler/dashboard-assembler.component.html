@@ -1,34 +1,213 @@
 <div class="dashboard-container">
+  <!-- Welcome Header -->
   <div class="dashboard-header">
-    <h1>Assembler Dashboard</h1>
-    <p>Welcome back, {{ user.name }}!</p>
+    <div class="welcome-content">
+      <div class="welcome-text">
+        <h1>Welcome back, {{ user.name }}! 🔧</h1>
+        <p>Manage your professional services and bookings</p>
+      </div>
+      <div class="user-avatar">
+        <img [src]="user.profileImage || 'assets/default-avatar.png'" [alt]="user.name">
+      </div>
+    </div>
   </div>
 
-  <div class="dashboard-section">
-    <h2>Your Bookings</h2>
-    <div *ngIf="bookings.length > 0" class="bookings-list">
-      <div *ngFor="let booking of bookings" class="booking-card">
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-content">
+        <h3>{{ bookings.length }}</h3>
+        <p>Total Bookings</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-content">
+        <h3>{{ getPendingBookings() }}</h3>
+        <p>Pending</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3>{{ getCompletedBookings() }}</h3>
+        <p>Completed</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-content">
+        <h3>{{ user.averageRating || '4.8' }}</h3>
+        <p>Your Rating</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="actions-grid">
+      <button class="action-card" routerLink="/profile">
+        <div class="action-icon">👤</div>
+        <h3>Update Profile</h3>
+        <p>Manage your professional profile</p>
+      </button>
+      <button class="action-card" (click)="toggleAvailability()">
+        <div class="action-icon">{{ isAvailable ? '🟢' : '🔴' }}</div>
+        <h3>{{ isAvailable ? 'Available' : 'Busy' }}</h3>
+        <p>{{ isAvailable ? 'You are accepting bookings' : 'You are not accepting bookings' }}</p>
+      </button>
+      <button class="action-card" (click)="refreshBookings()">
+        <div class="action-icon">🔄</div>
+        <h3>Refresh</h3>
+        <p>Update your bookings</p>
+      </button>
+    </div>
+  </div>
+
+  <!-- Bookings Section -->
+  <div class="bookings-section">
+    <div class="section-header">
+      <h2>Your Bookings</h2>
+      <div class="filter-tabs">
+        <button 
+          class="filter-tab" 
+          [class.active]="selectedFilter === 'all'"
+          (click)="setFilter('all')">
+          All ({{ bookings.length }})
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="selectedFilter === 'pending'"
+          (click)="setFilter('pending')">
+          Pending ({{ getPendingBookings() }})
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="selectedFilter === 'confirmed'"
+          (click)="setFilter('confirmed')">
+          Confirmed ({{ getConfirmedBookings() }})
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="selectedFilter === 'in-progress'"
+          (click)="setFilter('in-progress')">
+          In Progress ({{ getInProgressBookings() }})
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="selectedFilter === 'completed'"
+          (click)="setFilter('completed')">
+          Completed ({{ getCompletedBookings() }})
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="filteredBookings.length > 0" class="bookings-grid">
+      <div *ngFor="let booking of filteredBookings" class="booking-card" [ngClass]="getStatusClass(booking.status)">
         <div class="booking-header">
-          <h3>Booking #{{ booking.id }}</h3>
-          <span class="booking-status" [ngClass]="getStatusClass(booking.status)">
+          <div class="booking-id">
+            <span class="booking-number">#{{ booking.id }}</span>
+            <span class="booking-date">{{ booking.date | date:'MMM d, y' }}</span>
+          </div>
+          <div class="booking-status" [ngClass]="getStatusClass(booking.status)">
+            <div class="status-dot"></div>
             {{ booking.status | titlecase }}
-          </span>
+          </div>
         </div>
-        <div class="booking-details">
-          <p><strong>Customer ID:</strong> {{ booking.customerId }}</p>
-          <p><strong>Service ID:</strong> {{ booking.serviceId }}</p>
-          <p><strong>Date:</strong> {{ booking.date | date:'medium' }}</p>
-          <p *ngIf="booking.notes"><strong>Notes:</strong> {{ booking.notes }}</p>
+
+        <div class="booking-content">
+          <div class="customer-info">
+            <div class="customer-avatar">
+              <img [src]="getCustomerImage(booking.customerId)" [alt]="getCustomerName(booking.customerId)">
+            </div>
+            <div class="customer-details">
+              <h4>{{ getCustomerName(booking.customerId) }}</h4>
+              <p>{{ getCustomerLocation(booking.customerId) }}</p>
+              <div class="customer-rating">
+                <span class="stars">{{ getCustomerRating(booking.customerId) }}</span>
+                <span>{{ getCustomerRating(booking.customerId) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="service-info">
+            <div class="service-icon">🛠️</div>
+            <div class="service-details">
+              <h5>{{ getServiceName(booking.serviceId) }}</h5>
+              <p>{{ getServiceDescription(booking.serviceId) }}</p>
+              <div class="service-price">
+                <span class="price-label">Rate:</span>
+                <span class="price-value">{{ getServicePrice(booking.serviceId) }} JD/hour</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="booking-details">
+            <div class="detail-item">
+              <i class="detail-icon">📅</i>
+              <span>{{ booking.date | date:'EEEE, MMMM d, y' }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="detail-icon">⏰</i>
+              <span>{{ booking.date | date:'h:mm a' }}</span>
+            </div>
+            <div class="detail-item" *ngIf="booking.notes">
+              <i class="detail-icon">📝</i>
+              <span>{{ booking.notes }}</span>
+            </div>
+          </div>
         </div>
-        <div class="booking-actions" *ngIf="booking.status === 'pending' || booking.status === 'confirmed'">
-          <button *ngIf="booking.status === 'pending'" class="btn-primary" (click)="updateBookingStatus(booking.id, 'confirmed')">Confirm</button>
-          <button *ngIf="booking.status === 'confirmed'" class="btn-primary" (click)="updateBookingStatus(booking.id, 'in-progress')">Start</button>
-          <button class="btn-secondary" (click)="updateBookingStatus(booking.id, 'cancelled')">Cancel</button>
+
+        <div class="booking-actions">
+          <button class="btn-outline" (click)="viewBookingDetails(booking.id)">
+            <i class="btn-icon">👁️</i>
+            View Details
+          </button>
+          <button 
+            *ngIf="booking.status === 'pending'"
+            class="btn-primary" 
+            (click)="updateBookingStatus(booking.id, 'confirmed')">
+            <i class="btn-icon">✅</i>
+            Confirm
+          </button>
+          <button 
+            *ngIf="booking.status === 'confirmed'"
+            class="btn-primary" 
+            (click)="updateBookingStatus(booking.id, 'in-progress')">
+            <i class="btn-icon">🚀</i>
+            Start Job
+          </button>
+          <button 
+            *ngIf="booking.status === 'in-progress'"
+            class="btn-success" 
+            (click)="updateBookingStatus(booking.id, 'completed')">
+            <i class="btn-icon">✅</i>
+            Complete
+          </button>
+          <button 
+            *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
+            class="btn-secondary" 
+            (click)="updateBookingStatus(booking.id, 'cancelled')">
+            <i class="btn-icon">❌</i>
+            Cancel
+          </button>
         </div>
       </div>
     </div>
-    <div *ngIf="bookings.length === 0" class="no-bookings">
-      <p>You don't have any bookings yet.</p>
+
+    <div *ngIf="filteredBookings.length === 0" class="no-bookings">
+      <div class="no-bookings-content">
+        <div class="no-bookings-icon">📅</div>
+        <h3>No bookings found</h3>
+        <p *ngIf="selectedFilter === 'all'">You don't have any bookings yet. Make sure your profile is complete!</p>
+        <p *ngIf="selectedFilter !== 'all'">No {{ selectedFilter }} bookings found.</p>
+        <button class="btn-primary" routerLink="/profile">
+          <i class="btn-icon">👤</i>
+          Update Profile
+        </button>
+      </div>
     </div>
   </div>
 </div>
