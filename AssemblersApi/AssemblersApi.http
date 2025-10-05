@@ -1,0 +1,6 @@
+@AssemblersApi_HostAddress = http://localhost:5161
+
+GET {{AssemblersApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
