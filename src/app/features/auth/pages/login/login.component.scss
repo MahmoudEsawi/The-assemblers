@@ -169,6 +169,52 @@
           }
         }
       }
+
+      .demo-credentials {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: rgba($primary, 0.05);
+        border-radius: 12px;
+        border: 1px solid rgba($primary, 0.1);
+        text-align: left;
+
+        h4 {
+          color: $card-text-color;
+          font-size: 1.1rem;
+          font-weight: 600;
+          margin: 0 0 1rem 0;
+          text-align: center;
+        }
+
+        .credential-group {
+          margin-bottom: 1rem;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          h5 {
+            color: $primary;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+          }
+
+          p {
+            color: $text-secondary;
+            font-size: 0.9rem;
+            margin: 0.25rem 0;
+            font-family: 'Courier New', monospace;
+            background: rgba($background-color, 0.5);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+
+            strong {
+              color: $card-text-color;
+            }
+          }
+        }
+      }
     }
   }
 }

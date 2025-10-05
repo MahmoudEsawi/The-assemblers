@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Service } from '../../../../core/models/service.model';
-import { MockDataService } from '../../../../core/services/mock-data.service';
+import { ServiceService } from '../../../../core/services/service.service';
+import { CategoryService } from '../../../../core/services/category.service';
 
 @Component({
   selector: 'app-services',
@@ -17,23 +18,50 @@ export class ServicesComponent implements OnInit {
   filteredServices: Service[] = [];
   categories: any[] = [];
   searchTerm: string = '';
-  selectedCategory: string = 'all';
+  selectedCategory: number | string = 'all';
   sortBy: string = 'name';
   currentYear = new Date().getFullYear();
+  errorMessage: string = '';
+  isLoading: boolean = true;
 
   constructor(
-    private mockDataService: MockDataService,
+    private serviceService: ServiceService,
+    private categoryService: CategoryService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.services = this.mockDataService.getServices();
-    this.categories = this.mockDataService.getCategories();
-    this.filteredServices = [...this.services];
-    this.sortServices();
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    this.serviceService.getServices().subscribe({
+      next: (services) => {
+        console.log('Services loaded successfully:', services);
+        this.services = services;
+        this.filteredServices = [...this.services];
+        this.sortServices();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading services:', err);
+        this.errorMessage = `Failed to load services: ${err.message || err.statusText || 'Unknown error'}`;
+        this.isLoading = false;
+      }
+    });
+
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => {
+        console.log('Categories loaded successfully:', categories);
+        this.categories = categories;
+      },
+      error: (err) => {
+        console.error('Error loading categories:', err);
+        this.errorMessage += ` Failed to load categories: ${err.message || err.statusText || 'Unknown error'}`;
+      }
+    });
   }
 
-  onServiceClick(serviceId: string): void {
+  onServiceClick(serviceId: number): void {
     // Navigate to service assemblers page
     this.router.navigate(['/service-assemblers', serviceId]);
   }
@@ -42,7 +70,7 @@ export class ServicesComponent implements OnInit {
     this.filterServices();
   }
 
-  onCategorySelect(categoryId: string): void {
+  onCategorySelect(categoryId: number | string): void {
     this.selectedCategory = categoryId;
     this.filterServices();
   }
@@ -51,7 +79,7 @@ export class ServicesComponent implements OnInit {
     this.sortServices();
   }
 
-  onBookService(serviceId: string): void {
+  onBookService(serviceId: number): void {
     this.router.navigate(['/booking', serviceId]);
   }
 
@@ -66,8 +94,10 @@ export class ServicesComponent implements OnInit {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5 ? 1 : 0;
     const emptyStars = 5 - fullStars - halfStar;
-
-    return '★'.repeat(fullStars) + (halfStar ? '☆' : '') + '☆'.repeat(emptyStars);
+    
+    return '<i class="fas fa-star"></i>'.repeat(fullStars) + 
+           (halfStar ? '<i class="fas fa-star-half-alt"></i>' : '') + 
+           '<i class="far fa-star"></i>'.repeat(emptyStars);
   }
 
   private filterServices(): void {

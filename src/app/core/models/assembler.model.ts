@@ -1,28 +1,25 @@
 import { User } from './user.model';
 
 export interface DayAvailability {
+  id: number;
   start: string;
   end: string;
   available: boolean;
+  dayOfWeek: number;
+  assemblerId: number;
 }
 
-export interface Availability {
-  monday: DayAvailability;
-  tuesday: DayAvailability;
-  wednesday: DayAvailability;
-  thursday: DayAvailability;
-  friday: DayAvailability;
-  saturday: DayAvailability;
-  sunday: DayAvailability;
-}
-
-export interface Assembler extends User {
+export interface Assembler {
+  id: number;
+  userId: number;
+  user?: User;
   specialization: string;
   description: string;
   averageRating: number;
-  profileImage: string;
   coverImage?: string;
   location: string;
   isVerified: boolean;
-  availability?: Availability;
+  createdAt: string;
+  updatedAt: string;
+  availability?: DayAvailability[];
 }

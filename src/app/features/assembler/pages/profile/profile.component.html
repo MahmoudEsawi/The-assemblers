@@ -4,13 +4,13 @@
       <div class="profile-cover" [style.background-image]="'url(' + assembler.coverImage + ')'"></div>
       <div class="profile-info">
         <div class="profile-avatar">
-          <img [src]="assembler.profileImage" [alt]="assembler.name">
+          <img [src]="assembler.user?.profileImage || 'https://via.placeholder.com/150x150/cccccc/666666?text=No+Photo'" [alt]="assembler.user?.name">
         </div>
         <div class="profile-details">
-          <h1>{{ assembler.name }}</h1>
+          <h1>{{ assembler.user?.name }}</h1>
           <p class="profile-specialization">{{ assembler.specialization }}</p>
           <div class="profile-rating">
-            <span class="stars">{{ getStarRating(assembler.averageRating || 0) }}</span>
+            <span class="stars" [innerHTML]="getStarRating(assembler.averageRating || 0)"></span>
             <span>{{ assembler.averageRating || 0 }}</span>
             <span class="rating-count">({{ reviews.length }} reviews)</span>
           </div>
@@ -73,7 +73,7 @@
             <div class="service-meta">
               <div class="service-price">{{ service.price }} JD/hour</div>
               <div class="service-rating">
-                <span class="stars">{{ getStarRating(service.averageRating || 0) }}</span>
+                <span class="stars" [innerHTML]="getStarRating(service.averageRating || 0)"></span>
                 <span>{{ service.averageRating || 0 }}</span>
               </div>
             </div>
@@ -92,7 +92,7 @@
           <div *ngFor="let review of reviews" class="review-item">
             <div class="review-header">
               <div class="review-rating">
-                <span class="stars">{{ getStarRating(review.rating || 0) }}</span>
+                <span class="stars" [innerHTML]="getStarRating(review.rating || 0)"></span>
                 <span>{{ review.rating || 0 }}</span>
               </div>
               <span class="review-date">{{ review.createdAt | date:'shortDate' }}</span>
@@ -112,7 +112,7 @@
         <div class="contact-info">
           <div class="contact-item">
             <i class="icon-phone"></i>
-            <span>{{ assembler.phone }}</span>
+            <span>{{ assembler.user?.phone }}</span>
           </div>
           <div class="contact-item">
             <i class="icon-location"></i>
@@ -120,7 +120,7 @@
           </div>
           <div class="contact-item">
             <i class="icon-email"></i>
-            <span>{{ assembler.email }}</span>
+            <span>{{ assembler.user?.email }}</span>
           </div>
         </div>
         <div class="booking-actions">

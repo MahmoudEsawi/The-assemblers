@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LocationService, LocationSearchResult } from '../../../core/services/location.service';
-import { MockDataService } from '../../../core/services/mock-data.service';
+import { AssemblerService } from '../../../core/services/assembler.service';
 import { Assembler } from '../../../core/models/assembler.model';
 
 export interface SearchFilters {
@@ -58,7 +58,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
 
   constructor(
     private locationService: LocationService,
-    private mockDataService: MockDataService
+    private assemblerService: AssemblerService
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +89,14 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   }
 
   private loadServices(): void {
-    this.services = this.mockDataService.getCategories();
+    // For now, we'll use a simple list since we don't have categories in the API yet
+    this.services = [
+      { id: 1, name: 'Electronics' },
+      { id: 2, name: 'Furniture' },
+      { id: 3, name: 'Home Improvement' },
+      { id: 4, name: 'Computer Services' },
+      { id: 5, name: 'Appliance Repair' }
+    ];
   }
 
   private async getCurrentLocation(): Promise<void> {
@@ -136,18 +143,27 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Get all assemblers
-    const assemblers = this.mockDataService.getAssemblers();
-    
-    // Search by location
-    this.results = this.locationService.searchAssemblersInRadius(
-      this.currentLocation,
-      this.radius,
-      assemblers
-    );
+    // Get all assemblers from API
+    this.assemblerService.getAssemblers().subscribe({
+      next: (assemblers) => {
+        // Search by location
+        this.results = this.locationService.searchAssemblersInRadius(
+          this.currentLocation!,
+          this.radius,
+          assemblers
+        );
 
-    // Apply additional filters
-    this.applyFilters();
+        // Apply additional filters
+        this.applyFilters();
+        this.searchResults.emit(this.filteredResults);
+      },
+      error: (err) => {
+        console.error('Error loading assemblers:', err);
+        this.results = [];
+        this.filteredResults = [];
+        this.searchResults.emit([]);
+      }
+    });
   }
 
   private applyFilters(): void {
@@ -239,6 +255,8 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     const halfStar = rating % 1 >= 0.5 ? 1 : 0;
     const emptyStars = 5 - fullStars - halfStar;
     
-    return '★'.repeat(fullStars) + (halfStar ? '☆' : '') + '☆'.repeat(emptyStars);
+    return '<i class="fas fa-star"></i>'.repeat(fullStars) + 
+           (halfStar ? '<i class="fas fa-star-half-alt"></i>' : '') + 
+           '<i class="far fa-star"></i>'.repeat(emptyStars);
   }
 }

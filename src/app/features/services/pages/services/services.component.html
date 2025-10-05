@@ -50,27 +50,37 @@
     </div>
   </div>
 
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message" style="background: #ffebee; color: #c62828; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #c62828;">
+    <strong>Error:</strong> {{ errorMessage }}
+  </div>
+
+  <!-- Loading Message -->
+  <div *ngIf="isLoading" class="loading-message" style="text-align: center; padding: 40px; color: #666;">
+    <p>Loading services...</p>
+  </div>
+
   <!-- Results Count -->
-  <div class="results-info">
+  <div class="results-info" *ngIf="!isLoading">
     <p>{{ filteredServices.length }} service{{ filteredServices.length !== 1 ? 's' : '' }} found</p>
   </div>
 
   <!-- Services Grid -->
-  <div class="services-grid">
+  <div class="services-grid" *ngIf="!isLoading">
     <div 
       *ngFor="let service of filteredServices" 
       class="service-card"
       (click)="onServiceClick(service.id)">
       <div class="service-image">
         <img [src]="service.imageUrl" [alt]="service.name" onerror="this.src='/assets/services/placeholder.jpg'">
-        <div class="service-category-badge">{{ service.categoryName }}</div>
+        <div class="service-category-badge">{{ service.category.name }}</div>
       </div>
       <div class="service-content">
         <h3>{{ service.name }}</h3>
         <p class="service-description">{{ service.description }}</p>
         <div class="service-meta">
           <div class="service-rating">
-            <span class="stars">{{ getStarRating(service.averageRating || 0) }}</span>
+            <span class="stars" [innerHTML]="getStarRating(service.averageRating || 0)"></span>
             <span class="rating-text">{{ service.averageRating }} ({{ service.reviewCount }} reviews)</span>
           </div>
           <div class="service-price">{{ service.price }} JD/hour</div>
@@ -79,12 +89,15 @@
           <button class="btn-primary" (click)="onServiceClick(service.id); $event.stopPropagation()">
             View Assemblers
           </button>
+          <button class="btn-secondary" (click)="onBookService(service.id); $event.stopPropagation()">
+            Book Service
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="filteredServices.length === 0" class="no-services">
+  <div *ngIf="!isLoading && filteredServices.length === 0" class="no-services">
     <div class="no-services-content">
       <i class="icon-search-large"></i>
       <h3>No services found</h3>

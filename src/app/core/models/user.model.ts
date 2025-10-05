@@ -1,12 +1,12 @@
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
   password: string;
   phone?: string;
   address?: string;
   profileImage?: string;
-  role: 'customer' | 'assembler';
-  createdAt: Date;
-  updatedAt: Date;
+  role: 'Customer' | 'Assembler';
+  createdAt: string;
+  updatedAt: string;
 }

@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { of, Observable, BehaviorSubject } from 'rxjs';
-import { map, delay } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { User } from '../models/user.model';
-import { MockDataService } from './mock-data.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private apiUrl = 'http://localhost:5161/api';
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser$: Observable<User | null>;
 
-  constructor(private mockDataService: MockDataService) {
+  constructor(private http: HttpClient) {
     const storedUser = localStorage.getItem('currentUser');
     this.currentUserSubject = new BehaviorSubject<User | null>(
       storedUser ? JSON.parse(storedUser) : null
@@ -24,23 +25,37 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<User> {
-    const user = this.mockDataService.getUserByEmail(email);
+    const loginData = { email, password };
+    console.log('Attempting login with:', loginData);
     
-    if (user && user.password === password) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      this.currentUserSubject.next(user);
-      return of(user).pipe(delay(300));
-    }
-    
-    throw new Error('Invalid email or password');
+    return this.http.post<User>(`${this.apiUrl}/users/login`, loginData).pipe(
+      map(user => {
+        console.log('Login successful for user:', user.name);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+        return user;
+      })
+    );
   }
 
   register(userData: any): Observable<User> {
-    return this.mockDataService.createUser(userData).pipe(
+    return this.http.post<User>(`${this.apiUrl}/users`, userData).pipe(
       map(user => {
         localStorage.setItem('currentUser', JSON.stringify(user));
         this.currentUserSubject.next(user);
         return user;
+      })
+    );
+  }
+
+  getUserByEmail(email: string): Observable<User> {
+    return this.http.get<User[]>(`${this.apiUrl}/users`).pipe(
+      map(users => {
+        const user = users.find(u => u.email === email);
+        if (user) {
+          return user;
+        }
+        throw new Error('User not found');
       })
     );
   }

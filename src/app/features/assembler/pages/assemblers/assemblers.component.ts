@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Assembler } from '../../../../core/models/assembler.model';
-import { MockDataService } from '../../../../core/services/mock-data.service';
+import { AssemblerService } from '../../../../core/services/assembler.service';
+import { ServiceService } from '../../../../core/services/service.service';
 import { AssemblerCardComponent } from '../../../../shared/components/assembler-card/assembler-card.component';
 
 @Component({
@@ -33,12 +34,23 @@ export class AssemblersComponent implements OnInit {
     'General Maintenance'
   ];
 
-  constructor(private mockDataService: MockDataService) {}
+  constructor(
+    private assemblerService: AssemblerService, 
+    private serviceService: ServiceService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.assemblers = this.mockDataService.getAssemblers();
-    this.filteredAssemblers = [...this.assemblers];
-    this.sortAssemblers();
+    this.assemblerService.getAssemblers().subscribe({
+      next: (assemblers) => {
+        this.assemblers = assemblers;
+        this.filteredAssemblers = [...this.assemblers];
+        this.sortAssemblers();
+      },
+      error: (err) => {
+        console.error('Error loading assemblers:', err);
+      }
+    });
   }
 
   onSearch(): void {
@@ -56,7 +68,7 @@ export class AssemblersComponent implements OnInit {
   private filterAssemblers(): void {
     this.filteredAssemblers = this.assemblers.filter(assembler => {
       const matchesSearch = this.searchTerm === '' ||
-        assembler.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        assembler.user.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         assembler.specialization.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         assembler.location.toLowerCase().includes(this.searchTerm.toLowerCase());
 
@@ -73,7 +85,7 @@ export class AssemblersComponent implements OnInit {
     this.filteredAssemblers.sort((a, b) => {
       switch (this.sortBy) {
         case 'name':
-          return a.name.localeCompare(b.name);
+          return a.user.name.localeCompare(b.user.name);
         case 'rating':
           return b.averageRating - a.averageRating;
         case 'location':
@@ -86,17 +98,23 @@ export class AssemblersComponent implements OnInit {
     });
   }
 
-  onBookService(assemblerId: string): void {
+  onBookService(assemblerId: number): void {
     // Find a service for this assembler to book
-    const services = this.mockDataService.getServices();
-    const service = services.find(s => s.assemblerId === assemblerId);
-    if (service) {
-      window.location.href = `/booking/${service.id}/${assemblerId}`;
-    }
+    this.serviceService.getServices().subscribe({
+      next: (services) => {
+        const service = services.find(s => s.assemblerId === assemblerId);
+        if (service) {
+          this.router.navigate(['/booking', service.id, assemblerId]);
+        }
+      },
+      error: (err) => {
+        console.error('Error loading services:', err);
+      }
+    });
   }
 
-  onViewProfile(assemblerId: string): void {
-    window.location.href = `/profile/${assemblerId}`;
+  onViewProfile(assemblerId: number): void {
+    this.router.navigate(['/profile', assemblerId]);
   }
 
   clearFilters(): void {
@@ -111,7 +129,9 @@ export class AssemblersComponent implements OnInit {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5 ? 1 : 0;
     const emptyStars = 5 - fullStars - halfStar;
-
-    return '★'.repeat(fullStars) + (halfStar ? '☆' : '') + '☆'.repeat(emptyStars);
+    
+    return '<i class="fas fa-star"></i>'.repeat(fullStars) + 
+           (halfStar ? '<i class="fas fa-star-half-alt"></i>' : '') + 
+           '<i class="far fa-star"></i>'.repeat(emptyStars);
   }
 }

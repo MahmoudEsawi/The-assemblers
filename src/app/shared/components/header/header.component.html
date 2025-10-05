@@ -45,7 +45,7 @@
             </a>
           </li>
           <li *ngIf="authService.isAuthenticated()">
-            <a [routerLink]="authService.hasRole('customer') ? '/dashboard-customer' : '/dashboard-assembler'"
+            <a [routerLink]="authService.hasRole('Customer') ? '/dashboard-customer' : '/dashboard-assembler'"
                [class.active]="currentRoute.startsWith('/dashboard')"
                (click)="closeMobileMenu()">
               Dashboard

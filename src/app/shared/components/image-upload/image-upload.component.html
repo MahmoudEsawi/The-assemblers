@@ -88,8 +88,8 @@
         <div class="image-container">
           <img [src]="image.thumbnailUrl" [alt]="image.originalName">
           <div class="image-overlay">
-            <button class="view-btn" (click)="viewImage(image.url)">👁️</button>
-            <button class="delete-btn" (click)="removeUploadedImage(i)">🗑️</button>
+            <button class="view-btn" (click)="viewImage(image.url)"><i class="fas fa-eye"></i></button>
+            <button class="delete-btn" (click)="removeUploadedImage(i)"><i class="fas fa-trash"></i></button>
           </div>
         </div>
         <div class="image-info">

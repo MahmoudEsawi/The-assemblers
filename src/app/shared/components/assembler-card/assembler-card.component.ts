@@ -11,15 +11,17 @@ import { Assembler } from '../../../core/models/assembler.model';
 })
 export class AssemblerCardComponent {
   @Input() assembler!: Assembler;
-  @Output() bookService = new EventEmitter<string>();
-  @Output() viewProfile = new EventEmitter<string>();
+  @Output() bookService = new EventEmitter<number>();
+  @Output() viewProfile = new EventEmitter<number>();
 
   getStarRating(rating: number): string {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5 ? 1 : 0;
     const emptyStars = 5 - fullStars - halfStar;
     
-    return '★'.repeat(fullStars) + (halfStar ? '☆' : '') + '☆'.repeat(emptyStars);
+    return '<i class="fas fa-star"></i>'.repeat(fullStars) + 
+           (halfStar ? '<i class="fas fa-star-half-alt"></i>' : '') + 
+           '<i class="far fa-star"></i>'.repeat(emptyStars);
   }
 
   onBookService(): void {

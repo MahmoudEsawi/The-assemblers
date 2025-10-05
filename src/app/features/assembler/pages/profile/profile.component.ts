@@ -4,7 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Assembler } from '../../../../core/models/assembler.model';
 import { Service } from '../../../../core/models/service.model';
 import { Review } from '../../../../core/models/review.model';
-import { MockDataService } from '../../../../core/services/mock-data.service';
+import { AssemblerService } from '../../../../core/services/assembler.service';
+import { ServiceService } from '../../../../core/services/service.service';
+import { ReviewService } from '../../../../core/services/review.service';
 
 interface CalendarDay {
   date: number;
@@ -21,7 +23,7 @@ interface CalendarDay {
 })
 export class ProfileComponent implements OnInit {
   assembler: Assembler | null = null;
-  assemblerId: string | null = null;
+  assemblerId: number | null = null;
   reviews: Review[] = [];
   services: Service[] = [];
 
@@ -35,17 +37,43 @@ export class ProfileComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private mockDataService: MockDataService
+    private assemblerService: AssemblerService,
+    private serviceService: ServiceService,
+    private reviewService: ReviewService
   ) {}
 
   ngOnInit(): void {
-    this.assemblerId = this.route.snapshot.paramMap.get('id');
+    const assemblerIdParam = this.route.snapshot.paramMap.get('id');
+    this.assemblerId = assemblerIdParam ? parseInt(assemblerIdParam, 10) : null;
     
     if (this.assemblerId) {
-      this.assembler = this.mockDataService.getAssemblerById(this.assemblerId) ?? null;
-      this.reviews = this.mockDataService.getReviewsByAssembler(this.assemblerId);
-      this.services = this.mockDataService.getServices().filter(service => service.assemblerId === this.assemblerId);
-      this.generateCalendar();
+      this.assemblerService.getAssemblerById(this.assemblerId).subscribe({
+        next: (assembler) => {
+          this.assembler = assembler;
+          this.generateCalendar();
+        },
+        error: (err) => {
+          console.error('Error loading assembler:', err);
+        }
+      });
+
+      this.reviewService.getReviewsByAssembler(this.assemblerId).subscribe({
+        next: (reviews) => {
+          this.reviews = reviews;
+        },
+        error: (err) => {
+          console.error('Error loading reviews:', err);
+        }
+      });
+
+      this.serviceService.getServices().subscribe({
+        next: (services) => {
+          this.services = services.filter(service => service.assemblerId === this.assemblerId);
+        },
+        error: (err) => {
+          console.error('Error loading services:', err);
+        }
+      });
     }
   }
 
@@ -97,10 +125,13 @@ export class ProfileComponent implements OnInit {
     
     const dayOfWeek = day.fullDate.getDay();
     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const dayName = dayNames[dayOfWeek] as keyof typeof this.assembler.availability;
+    const dayName = dayNames[dayOfWeek];
     
-    const availability = this.assembler.availability[dayName];
-    return availability.available && day.isCurrentMonth;
+    const dayAvailability = this.assembler.availability.find(da => 
+      da.dayOfWeek === dayOfWeek
+    );
+    
+    return dayAvailability ? dayAvailability.available && day.isCurrentMonth : true;
   }
 
   isToday(day: CalendarDay): boolean {
@@ -114,14 +145,17 @@ export class ProfileComponent implements OnInit {
     const now = new Date();
     const dayOfWeek = now.getDay();
     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const dayName = dayNames[dayOfWeek] as keyof typeof this.assembler.availability;
+    const dayName = dayNames[dayOfWeek];
     
-    const availability = this.assembler.availability[dayName];
-    if (!availability.available) return false;
+    const dayAvailability = this.assembler.availability.find(da => 
+      da.dayOfWeek === dayOfWeek
+    );
+    
+    if (!dayAvailability || !dayAvailability.available) return false;
     
     const currentTime = now.getHours() * 100 + now.getMinutes();
-    const startTime = parseInt(availability.start.replace(':', ''));
-    const endTime = parseInt(availability.end.replace(':', ''));
+    const startTime = parseInt(dayAvailability.start.replace(':', ''));
+    const endTime = parseInt(dayAvailability.end.replace(':', ''));
     
     return currentTime >= startTime && currentTime <= endTime;
   }
@@ -140,7 +174,7 @@ export class ProfileComponent implements OnInit {
 
   contactAssembler(): void {
     // In a real app, this would open a contact form or messaging system
-    alert(`Contact ${this.assembler?.name} at ${this.assembler?.phone} or ${this.assembler?.email}`);
+    alert(`Contact ${this.assembler?.user.name} at ${this.assembler?.user.phone} or ${this.assembler?.user.email}`);
   }
 
   getStarRating(rating: number): string {
@@ -148,6 +182,8 @@ export class ProfileComponent implements OnInit {
     const halfStar = rating % 1 >= 0.5 ? 1 : 0;
     const emptyStars = 5 - fullStars - halfStar;
     
-    return '★'.repeat(fullStars) + (halfStar ? '☆' : '') + '☆'.repeat(emptyStars);
+    return '<i class="fas fa-star"></i>'.repeat(fullStars) + 
+           (halfStar ? '<i class="fas fa-star-half-alt"></i>' : '') + 
+           '<i class="far fa-star"></i>'.repeat(emptyStars);
   }
 }

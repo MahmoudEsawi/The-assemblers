@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AssemblerCardComponent } from '../../../../shared/components/assembler-card/assembler-card.component';
-import { MockDataService } from '../../../../core/services/mock-data.service';
+import { AssemblerService } from '../../../../core/services/assembler.service';
+import { ServiceService } from '../../../../core/services/service.service';
 import { Service } from '../../../../core/models/service.model';
+import { Assembler } from '../../../../core/models/assembler.model';
 
 @Component({
   selector: 'app-landing',
@@ -17,33 +19,59 @@ import { Service } from '../../../../core/models/service.model';
   styleUrls: ['./landing.component.scss']
 })
 export class LandingComponent implements OnInit {
-  featuredAssemblers: any[] = [];
+  featuredAssemblers: Assembler[] = [];
   popularServices: Service[] = [];
+  errorMessage: string = '';
+  isLoading: boolean = true;
 
   constructor(
-    private mockDataService: MockDataService,
+    private assemblerService: AssemblerService,
+    private serviceService: ServiceService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.featuredAssemblers = this.mockDataService.getAssemblers().slice(0, 6);
-    this.popularServices = this.mockDataService.getServices().slice(0, 6);
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    this.assemblerService.getAssemblers().subscribe({
+      next: (assemblers) => {
+        console.log('Assemblers loaded successfully:', assemblers);
+        this.featuredAssemblers = assemblers.slice(0, 6);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading assemblers:', err);
+        this.errorMessage = `Failed to load assemblers: ${err.message || err.statusText || 'Unknown error'}`;
+        this.isLoading = false;
+      }
+    });
+
+    this.serviceService.getServices().subscribe({
+      next: (services) => {
+        console.log('Services loaded successfully:', services);
+        this.popularServices = services.slice(0, 6);
+      },
+      error: (err) => {
+        console.error('Error loading services:', err);
+        this.errorMessage += ` Failed to load services: ${err.message || err.statusText || 'Unknown error'}`;
+      }
+    });
   }
 
-  onServiceClick(serviceId: string): void {
+  onServiceClick(serviceId: number): void {
     this.router.navigate(['/service-assemblers', serviceId]);
   }
 
-  onBookService(assemblerId: string): void {
+  onBookService(assemblerId: number): void {
     // Find a service for this assembler to book
-    const services = this.mockDataService.getServices();
-    const service = services.find(s => s.assemblerId === assemblerId);
+    const service = this.popularServices.find(s => s.assemblerId === assemblerId);
     if (service) {
       this.router.navigate(['/booking', service.id, assemblerId]);
     }
   }
 
-  onViewProfile(assemblerId: string): void {
+  onViewProfile(assemblerId: number): void {
     this.router.navigate(['/profile', assemblerId]);
   }
 }

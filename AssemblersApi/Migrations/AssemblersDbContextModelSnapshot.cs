@@ -22,14 +22,16 @@ namespace AssemblersApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AssemblersApi.Models.Assembler", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Assembler", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("AverageRating")
-                        .HasColumnType("decimal(3,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("CoverImage")
                         .HasMaxLength(500)
@@ -39,65 +41,122 @@ namespace AssemblersApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Specialization")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Assemblers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AverageRating = 4.8m,
+                            CoverImage = "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Expert in IKEA and other furniture assembly",
+                            IsDeleted = false,
+                            IsVerified = true,
+                            Location = "New York, NY",
+                            Specialization = "Furniture Assembly",
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AverageRating = 4.9m,
+                            CoverImage = "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=300&fit=crop",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Professional electronics installation and setup",
+                            IsDeleted = false,
+                            IsVerified = true,
+                            Location = "Los Angeles, CA",
+                            Specialization = "Electronics Setup",
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AverageRating = 4.7m,
+                            CoverImage = "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=400&h=300&fit=crop",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Custom PC building and computer repair",
+                            IsDeleted = false,
+                            IsVerified = true,
+                            Location = "Chicago, IL",
+                            Specialization = "Computer Assembly",
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 5
+                        });
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Booking", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Booking", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AssemblerId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AssemblerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -113,24 +172,27 @@ namespace AssemblersApi.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Category", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Category", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -147,107 +209,303 @@ namespace AssemblersApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Id = 1,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Electronic device assembly and repair",
-                            Image = "electronics.jpg",
-                            Name = "Electronics",
+                            Description = "Professional furniture assembly services",
+                            Image = "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "Furniture Assembly",
                             UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Id = 2,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Furniture assembly and repair",
-                            Image = "furniture.jpg",
-                            Name = "Furniture",
+                            Description = "Electronics installation and setup services",
+                            Image = "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "Electronics Setup",
                             UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            Id = 3,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Home improvement and maintenance",
-                            Image = "home-improvement.jpg",
+                            Description = "General home improvement and repair services",
+                            Image = "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop",
+                            IsDeleted = false,
                             Name = "Home Improvement",
                             UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
+                            Id = 4,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Computer assembly and repair",
-                            Image = "computer-services.jpg",
+                            Description = "Computer assembly, repair, and setup services",
+                            Image = "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=400&h=300&fit=crop",
+                            IsDeleted = false,
                             Name = "Computer Services",
                             UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
+                            Id = 5,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Home appliance repair and maintenance",
-                            Image = "appliance-repair.jpg",
-                            Name = "Appliance Repair",
+                            Description = "Smart home device installation and setup",
+                            Image = "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "Smart Home",
                             UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.DayAvailability", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.DayAvailability", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AssemblerId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AssemblerId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Available")
                         .HasColumnType("bit");
 
-                    b.Property<string>("DayOfWeek")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("End")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Start")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                    b.Property<TimeSpan>("End")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<TimeSpan>("Start")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AssemblerId");
 
                     b.ToTable("DayAvailabilities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AssemblerId = 1,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 1,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AssemblerId = 1,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 2,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AssemblerId = 1,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 3,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AssemblerId = 1,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 4,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AssemblerId = 1,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 5,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AssemblerId = 2,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 1,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AssemblerId = 2,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 2,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 8,
+                            AssemblerId = 2,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 3,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AssemblerId = 2,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 4,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 10,
+                            AssemblerId = 2,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 5,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 11,
+                            AssemblerId = 3,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 1,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AssemblerId = 3,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 2,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 13,
+                            AssemblerId = 3,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 3,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 14,
+                            AssemblerId = 3,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 4,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 15,
+                            AssemblerId = 3,
+                            Available = true,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DayOfWeek = 5,
+                            End = new TimeSpan(0, 17, 0, 0, 0),
+                            IsDeleted = false,
+                            Start = new TimeSpan(0, 9, 0, 0, 0),
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Review", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Review", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AssemblerId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid?>("BookingId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("AssemblerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Comment")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
@@ -266,43 +524,46 @@ namespace AssemblersApi.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Service", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Service", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AssemblerId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("AverageRating")
-                        .HasColumnType("decimal(3,2)");
+                    b.Property<int>("AssemblerId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<decimal>("AverageRating")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<int?>("ReviewCount")
+                    b.Property<int>("ReviewCount")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -315,13 +576,137 @@ namespace AssemblersApi.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Services");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AssemblerId = 1,
+                            AverageRating = 4.8m,
+                            CategoryId = 1,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Professional IKEA furniture assembly service",
+                            ImageUrl = "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "IKEA Furniture Assembly",
+                            Price = 25.00m,
+                            ReviewCount = 15,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AssemblerId = 1,
+                            AverageRating = 4.9m,
+                            CategoryId = 1,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Office furniture assembly and setup",
+                            ImageUrl = "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "Office Furniture Setup",
+                            Price = 30.00m,
+                            ReviewCount = 8,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AssemblerId = 2,
+                            AverageRating = 4.9m,
+                            CategoryId = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Professional TV mounting and setup",
+                            ImageUrl = "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "TV Mounting",
+                            Price = 50.00m,
+                            ReviewCount = 12,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AssemblerId = 2,
+                            AverageRating = 4.7m,
+                            CategoryId = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Complete home theater system installation",
+                            ImageUrl = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "Home Theater Setup",
+                            Price = 75.00m,
+                            ReviewCount = 6,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AssemblerId = 3,
+                            AverageRating = 4.8m,
+                            CategoryId = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Custom gaming PC assembly and setup",
+                            ImageUrl = "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "Custom PC Build",
+                            Price = 100.00m,
+                            ReviewCount = 20,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AssemblerId = 3,
+                            AverageRating = 4.6m,
+                            CategoryId = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Professional laptop repair and maintenance",
+                            ImageUrl = "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "Laptop Repair",
+                            Price = 40.00m,
+                            ReviewCount = 10,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AssemblerId = 2,
+                            AverageRating = 4.9m,
+                            CategoryId = 5,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Smart home device installation and configuration",
+                            ImageUrl = "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "Smart Home Setup",
+                            Price = 60.00m,
+                            ReviewCount = 14,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 8,
+                            AssemblerId = 1,
+                            AverageRating = 4.5m,
+                            CategoryId = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "General assembly and installation services",
+                            ImageUrl = "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop",
+                            IsDeleted = false,
+                            Name = "General Assembly",
+                            Price = 35.00m,
+                            ReviewCount = 7,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.User", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .HasMaxLength(500)
@@ -334,6 +719,9 @@ namespace AssemblersApi.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -355,10 +743,8 @@ namespace AssemblersApi.Migrations
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("customer");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -373,19 +759,79 @@ namespace AssemblersApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            Id = 1,
+                            Address = "123 Main St",
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "john@example.com",
-                            Name = "John Doe",
-                            Password = "hashedpassword",
-                            Role = "customer",
+                            IsDeleted = false,
+                            Name = "John Smith",
+                            Password = "75K3eLr+dx6JJFuJ7LwIpEpOFmwGZZkRiB84PURz6U8=",
+                            Phone = "+1234567890",
+                            ProfileImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+                            Role = "Customer",
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "456 Oak Ave",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "sarah@example.com",
+                            IsDeleted = false,
+                            Name = "Sarah Johnson",
+                            Password = "75K3eLr+dx6JJFuJ7LwIpEpOFmwGZZkRiB84PURz6U8=",
+                            Phone = "+1234567891",
+                            ProfileImage = "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
+                            Role = "Customer",
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Address = "789 Pine Rd",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "mike@example.com",
+                            IsDeleted = false,
+                            Name = "Mike Wilson",
+                            Password = "75K3eLr+dx6JJFuJ7LwIpEpOFmwGZZkRiB84PURz6U8=",
+                            Phone = "+1234567892",
+                            ProfileImage = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+                            Role = "Assembler",
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Address = "321 Elm St",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "lisa@example.com",
+                            IsDeleted = false,
+                            Name = "Lisa Brown",
+                            Password = "75K3eLr+dx6JJFuJ7LwIpEpOFmwGZZkRiB84PURz6U8=",
+                            Phone = "+1234567893",
+                            ProfileImage = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+                            Role = "Assembler",
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Address = "654 Maple Dr",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "david@example.com",
+                            IsDeleted = false,
+                            Name = "David Lee",
+                            Password = "75K3eLr+dx6JJFuJ7LwIpEpOFmwGZZkRiB84PURz6U8=",
+                            Phone = "+1234567894",
+                            ProfileImage = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+                            Role = "Assembler",
                             UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Assembler", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Assembler", b =>
                 {
-                    b.HasOne("AssemblersApi.Models.User", "User")
+                    b.HasOne("AssemblersApi.Domain.Entities.User", "User")
                         .WithMany("AssemblerProfiles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -394,21 +840,21 @@ namespace AssemblersApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Booking", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Booking", b =>
                 {
-                    b.HasOne("AssemblersApi.Models.Assembler", "Assembler")
-                        .WithMany("Bookings")
+                    b.HasOne("AssemblersApi.Domain.Entities.Assembler", "Assembler")
+                        .WithMany("AssemblerBookings")
                         .HasForeignKey("AssemblerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AssemblersApi.Models.User", "Customer")
+                    b.HasOne("AssemblersApi.Domain.Entities.User", "Customer")
                         .WithMany("CustomerBookings")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AssemblersApi.Models.Service", "Service")
+                    b.HasOne("AssemblersApi.Domain.Entities.Service", "Service")
                         .WithMany("Bookings")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -421,9 +867,9 @@ namespace AssemblersApi.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.DayAvailability", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.DayAvailability", b =>
                 {
-                    b.HasOne("AssemblersApi.Models.Assembler", "Assembler")
+                    b.HasOne("AssemblersApi.Domain.Entities.Assembler", "Assembler")
                         .WithMany("Availability")
                         .HasForeignKey("AssemblerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -432,21 +878,22 @@ namespace AssemblersApi.Migrations
                     b.Navigation("Assembler");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Review", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Review", b =>
                 {
-                    b.HasOne("AssemblersApi.Models.Assembler", "Assembler")
-                        .WithMany("Reviews")
+                    b.HasOne("AssemblersApi.Domain.Entities.Assembler", "Assembler")
+                        .WithMany("AssemblerReviews")
                         .HasForeignKey("AssemblerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AssemblersApi.Models.Booking", "Booking")
+                    b.HasOne("AssemblersApi.Domain.Entities.Booking", "Booking")
                         .WithMany("Reviews")
                         .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("AssemblersApi.Models.User", "Customer")
-                        .WithMany("ReviewsGiven")
+                    b.HasOne("AssemblersApi.Domain.Entities.User", "Customer")
+                        .WithMany("CustomerReviews")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -458,15 +905,15 @@ namespace AssemblersApi.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Service", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Service", b =>
                 {
-                    b.HasOne("AssemblersApi.Models.Assembler", "Assembler")
+                    b.HasOne("AssemblersApi.Domain.Entities.Assembler", "Assembler")
                         .WithMany("Services")
                         .HasForeignKey("AssemblerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AssemblersApi.Models.Category", "Category")
+                    b.HasOne("AssemblersApi.Domain.Entities.Category", "Category")
                         .WithMany("Services")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -477,39 +924,39 @@ namespace AssemblersApi.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Assembler", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Assembler", b =>
                 {
+                    b.Navigation("AssemblerBookings");
+
+                    b.Navigation("AssemblerReviews");
+
                     b.Navigation("Availability");
 
-                    b.Navigation("Bookings");
-
-                    b.Navigation("Reviews");
-
                     b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Booking", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Booking", b =>
                 {
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Category", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.Service", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.Service", b =>
                 {
                     b.Navigation("Bookings");
                 });
 
-            modelBuilder.Entity("AssemblersApi.Models.User", b =>
+            modelBuilder.Entity("AssemblersApi.Domain.Entities.User", b =>
                 {
                     b.Navigation("AssemblerProfiles");
 
                     b.Navigation("CustomerBookings");
 
-                    b.Navigation("ReviewsGiven");
+                    b.Navigation("CustomerReviews");
                 });
 #pragma warning restore 612, 618
         }

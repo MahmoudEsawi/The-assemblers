@@ -57,7 +57,7 @@ export class NotificationService {
       success: '✓',
       error: '✕',
       info: 'ℹ',
-      warning: '⚠'
+      warning: '<i class="fas fa-exclamation-triangle"></i>'
     };
     return icons[type] || 'ℹ';
   }

@@ -1,20 +1,33 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Service } from '../models/service.model';
-import { MockDataService } from './mock-data.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServiceService {
-  constructor(private mockDataService: MockDataService) {}
+  private apiUrl = 'http://localhost:5161/api';
+
+  constructor(private http: HttpClient) {}
 
   getServices(): Observable<Service[]> {
-    return of(this.mockDataService.getServices()).pipe(delay(300));
+    return this.http.get<Service[]>(`${this.apiUrl}/services`);
   }
 
-  getServiceById(id: string): Observable<Service | undefined> {
-    return of(this.mockDataService.getServiceById(id)).pipe(delay(300));
+  getServiceById(id: number): Observable<Service> {
+    return this.http.get<Service>(`${this.apiUrl}/services/${id}`);
+  }
+
+  createService(service: Service): Observable<Service> {
+    return this.http.post<Service>(`${this.apiUrl}/services`, service);
+  }
+
+  updateService(id: number, service: Service): Observable<Service> {
+    return this.http.put<Service>(`${this.apiUrl}/services/${id}`, service);
+  }
+
+  deleteService(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/services/${id}`);
   }
 }

@@ -390,5 +390,5 @@
 }
 
 // Icon styles
-.icon-search::before { content: "🔍"; }
-.icon-search-large::before { content: "🔍"; font-size: 4rem; }
+.icon-search::before { content: "\f002"; } /* Font Awesome search */
+.icon-search-large::before { content: "\f002"; font-size: 4rem; } /* Font Awesome search */

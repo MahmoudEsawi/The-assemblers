@@ -1,132 +1,77 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using AssemblersApi.Data;
-using AssemblersApi.Models;
+using AssemblersApi.Application.DTOs;
+using AssemblersApi.Application.Interfaces;
 
-namespace AssemblersApi.Controllers
+namespace AssemblersApi.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AssemblersController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AssemblersController : ControllerBase
+    private readonly IAssemblerService _assemblerService;
+
+    public AssemblersController(IAssemblerService assemblerService)
     {
-        private readonly AssemblersDbContext _context;
+        _assemblerService = assemblerService;
+    }
 
-        public AssemblersController(AssemblersDbContext context)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<AssemblerDto>>> GetAssemblers()
+    {
+        var assemblers = await _assemblerService.GetAllAsync();
+        return Ok(assemblers);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<AssemblerDto>> GetAssembler(int id)
+    {
+        var assembler = await _assemblerService.GetByIdAsync(id);
+        if (assembler == null)
         {
-            _context = context;
+            return NotFound();
         }
+        return Ok(assembler);
+    }
 
-        // GET: api/assemblers
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Assembler>>> GetAssemblers()
+    [HttpPost]
+    public async Task<ActionResult<AssemblerDto>> CreateAssembler(CreateAssemblerDto createAssemblerDto)
+    {
+        try
         {
-            return await _context.Assemblers
-                .Include(a => a.User)
-                .Include(a => a.Services)
-                .Include(a => a.Availability)
-                .ToListAsync();
+            var assembler = await _assemblerService.CreateAsync(createAssemblerDto);
+            return CreatedAtAction(nameof(GetAssembler), new { id = assembler.Id }, assembler);
         }
-
-        // GET: api/assemblers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Assembler>> GetAssembler(Guid id)
+        catch (InvalidOperationException ex)
         {
-            var assembler = await _context.Assemblers
-                .Include(a => a.User)
-                .Include(a => a.Services)
-                .Include(a => a.Availability)
-                .FirstOrDefaultAsync(a => a.Id == id);
-
-            if (assembler == null)
-            {
-                return NotFound();
-            }
-
-            return assembler;
+            return BadRequest(ex.Message);
         }
+    }
 
-        // GET: api/assemblers/by-user/5
-        [HttpGet("by-user/{userId}")]
-        public async Task<ActionResult<Assembler>> GetAssemblerByUserId(Guid userId)
+    [HttpGet("by-user/{userId}")]
+    public async Task<ActionResult<AssemblerDto>> GetAssemblerByUserId(int userId)
+    {
+        var assembler = await _assemblerService.GetByUserIdAsync(userId);
+        if (assembler == null)
         {
-            var assembler = await _context.Assemblers
-                .Include(a => a.User)
-                .Include(a => a.Services)
-                .Include(a => a.Availability)
-                .FirstOrDefaultAsync(a => a.UserId == userId);
-
-            if (assembler == null)
-            {
-                return NotFound();
-            }
-
-            return assembler;
+            return NotFound();
         }
+        return Ok(assembler);
+    }
 
-        // POST: api/assemblers
-        [HttpPost]
-        public async Task<ActionResult<Assembler>> PostAssembler(Assembler assembler)
-        {
-            assembler.Id = Guid.NewGuid();
-            assembler.CreatedAt = DateTime.UtcNow;
-            assembler.UpdatedAt = DateTime.UtcNow;
+    [HttpGet("specialization/{specialization}")]
+    public async Task<ActionResult<IEnumerable<AssemblerDto>>> GetAssemblersBySpecialization(string specialization)
+    {
+        var assemblers = await _assemblerService.GetBySpecializationAsync(specialization);
+        return Ok(assemblers);
+    }
 
-            _context.Assemblers.Add(assembler);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAssembler", new { id = assembler.Id }, assembler);
-        }
-
-        // PUT: api/assemblers/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAssembler(Guid id, Assembler assembler)
-        {
-            if (id != assembler.Id)
-            {
-                return BadRequest();
-            }
-
-            assembler.UpdatedAt = DateTime.UtcNow;
-            _context.Entry(assembler).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AssemblerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // DELETE: api/assemblers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAssembler(Guid id)
-        {
-            var assembler = await _context.Assemblers.FindAsync(id);
-            if (assembler == null)
-            {
-                return NotFound();
-            }
-
-            _context.Assemblers.Remove(assembler);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool AssemblerExists(Guid id)
-        {
-            return _context.Assemblers.Any(e => e.Id == id);
-        }
+    [HttpGet("available")]
+    public async Task<ActionResult<IEnumerable<AssemblerDto>>> GetAvailableAssemblers(
+        [FromQuery] DateTime date,
+        [FromQuery] TimeSpan startTime,
+        [FromQuery] TimeSpan endTime)
+    {
+        var assemblers = await _assemblerService.GetAvailableAssemblersAsync(date, startTime, endTime);
+        return Ok(assemblers);
     }
 }

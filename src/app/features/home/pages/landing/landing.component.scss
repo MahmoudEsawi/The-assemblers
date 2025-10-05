@@ -414,7 +414,7 @@
 }
 
 // Icon styles
-.icon-search::before { content: "🔍"; }
-.icon-user::before { content: "👤"; }
-.icon-star::before { content: "⭐"; }
+.icon-search::before { content: "\f002"; } /* Font Awesome search */
+.icon-user::before { content: "\f007"; } /* Font Awesome user */
+.icon-star::before { content: "\f005"; } /* Font Awesome star */
 .icon-arrow-right::before { content: "→"; }

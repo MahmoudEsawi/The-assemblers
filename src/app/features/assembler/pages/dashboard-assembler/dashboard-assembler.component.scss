@@ -395,6 +395,25 @@
                 font-size: 0.9rem;
               }
 
+              .customer-contact {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+                
+                span {
+                  color: $text-secondary;
+                  font-size: 0.8rem;
+                  display: flex;
+                  align-items: center;
+                  gap: 0.5rem;
+                  
+                  i {
+                    color: $primary;
+                    width: 12px;
+                  }
+                }
+              }
+
               .customer-rating {
                 display: flex;
                 align-items: center;
@@ -462,6 +481,21 @@
                   color: $primary;
                   font-weight: 600;
                   font-size: 0.9rem;
+                }
+              }
+
+              .service-category {
+                margin-top: 0.5rem;
+                
+                .category-badge {
+                  display: inline-block;
+                  background: rgba($primary, 0.1);
+                  color: $primary;
+                  padding: 0.25rem 0.5rem;
+                  border-radius: 8px;
+                  font-size: 0.75rem;
+                  font-weight: 500;
+                  border: 1px solid rgba($primary, 0.2);
                 }
               }
             }

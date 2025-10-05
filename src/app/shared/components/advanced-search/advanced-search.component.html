@@ -41,7 +41,7 @@
           <span>{{ currentLocation.address || 'Current Location' }}</span>
         </div>
         <div *ngIf="!isGettingLocation && !currentLocation" class="no-location">
-          <i class="warning-icon">⚠️</i>
+          <i class="warning-icon"><i class="fas fa-exclamation-triangle"></i></i>
           <span>Location not available</span>
         </div>
       </div>
@@ -113,7 +113,7 @@
             class="star"
             [class.active]="star <= minRating"
             (click)="minRating = star; onFiltersChange()">
-            ★
+            <i class="fas fa-star"></i>
           </span>
         </div>
         <span class="rating-text">{{ minRating }}+ stars</span>

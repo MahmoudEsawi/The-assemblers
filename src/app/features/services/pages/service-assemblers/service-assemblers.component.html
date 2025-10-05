@@ -5,7 +5,7 @@
       <p class="service-description">{{ service.description }}</p>
       <div class="service-meta">
         <div class="service-rating">
-          <span class="stars">{{ getStarRating(service.averageRating || 0) }}</span>
+          <span class="stars" [innerHTML]="getStarRating(service.averageRating || 0)"></span>
           <span class="rating-text">{{ service.averageRating }} ({{ service.reviewCount }} reviews)</span>
         </div>
         <div class="service-price">${{ service.price }}/hour</div>

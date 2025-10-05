@@ -3,7 +3,7 @@
   <div class="dashboard-header">
     <div class="welcome-content">
       <div class="welcome-text">
-        <h1>Welcome back, {{ user.name }}! 🔧</h1>
+        <h1>Welcome back, {{ user.name }}! <i class="fas fa-tools"></i></h1>
         <p>Manage your professional services and bookings</p>
       </div>
       <div class="user-avatar">
@@ -29,14 +29,14 @@
       </div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon">✅</div>
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
       <div class="stat-content">
         <h3>{{ getCompletedBookings() }}</h3>
         <p>Completed</p>
       </div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon">⭐</div>
+      <div class="stat-icon"><i class="fas fa-star"></i></div>
       <div class="stat-content">
         <h3>{{ user.averageRating || '4.8' }}</h3>
         <p>Your Rating</p>
@@ -113,48 +113,55 @@
           </div>
           <div class="booking-status" [ngClass]="getStatusClass(booking.status)">
             <div class="status-dot"></div>
-            {{ booking.status | titlecase }}
+            {{ getStatusText(booking.status) }}
           </div>
         </div>
 
         <div class="booking-content">
           <div class="customer-info">
             <div class="customer-avatar">
-              <img [src]="getCustomerImage(booking.customerId)" [alt]="getCustomerName(booking.customerId)">
+              <img [src]="booking.customer.profileImage || 'assets/default-avatar.png'" [alt]="booking.customer.name">
             </div>
             <div class="customer-details">
-              <h4>{{ getCustomerName(booking.customerId) }}</h4>
-              <p>{{ getCustomerLocation(booking.customerId) }}</p>
-              <div class="customer-rating">
-                <span class="stars">{{ getCustomerRating(booking.customerId) }}</span>
-                <span>{{ getCustomerRating(booking.customerId) }}</span>
+              <h4>{{ booking.customer.name }}</h4>
+              <p>{{ booking.customer.address || 'No address provided' }}</p>
+              <div class="customer-contact">
+                <span><i class="fas fa-phone"></i> {{ booking.customer.phone || 'No phone' }}</span>
+                <span><i class="fas fa-envelope"></i> {{ booking.customer.email }}</span>
               </div>
             </div>
           </div>
 
           <div class="service-info">
-            <div class="service-icon">🛠️</div>
+            <div class="service-icon"><i class="fas fa-wrench"></i></div>
             <div class="service-details">
-              <h5>{{ getServiceName(booking.serviceId) }}</h5>
-              <p>{{ getServiceDescription(booking.serviceId) }}</p>
+              <h5>{{ booking.service.name }}</h5>
+              <p>{{ booking.service.description || 'No description available' }}</p>
               <div class="service-price">
                 <span class="price-label">Rate:</span>
-                <span class="price-value">{{ getServicePrice(booking.serviceId) }} JD/hour</span>
+                <span class="price-value">${{ booking.service.price }}/hour</span>
+              </div>
+              <div class="service-category">
+                <span class="category-badge">{{ booking.service.category?.name || 'General' }}</span>
               </div>
             </div>
           </div>
 
           <div class="booking-details">
             <div class="detail-item">
-              <i class="detail-icon">📅</i>
+              <i class="detail-icon"><i class="fas fa-calendar"></i></i>
               <span>{{ booking.date | date:'EEEE, MMMM d, y' }}</span>
             </div>
             <div class="detail-item">
-              <i class="detail-icon">⏰</i>
-              <span>{{ booking.date | date:'h:mm a' }}</span>
+              <i class="detail-icon"><i class="fas fa-clock"></i></i>
+              <span>{{ booking.startTime }} - {{ booking.endTime }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="detail-icon"><i class="fas fa-dollar-sign"></i></i>
+              <span>Total: ${{ booking.totalPrice }}</span>
             </div>
             <div class="detail-item" *ngIf="booking.notes">
-              <i class="detail-icon">📝</i>
+              <i class="detail-icon"><i class="fas fa-sticky-note"></i></i>
               <span>{{ booking.notes }}</span>
             </div>
           </div>
@@ -162,36 +169,42 @@
 
         <div class="booking-actions">
           <button class="btn-outline" (click)="viewBookingDetails(booking.id)">
-            <i class="btn-icon">👁️</i>
+            <i class="btn-icon"><i class="fas fa-eye"></i></i>
             View Details
           </button>
+          
+          <!-- Pending Status Actions -->
           <button 
-            *ngIf="booking.status === 'pending'"
-            class="btn-primary" 
-            (click)="updateBookingStatus(booking.id, 'confirmed')">
-            <i class="btn-icon">✅</i>
+            *ngIf="booking.status === 0"
+            class="btn-success" 
+            (click)="confirmBooking(booking.id)">
+            <i class="btn-icon"><i class="fas fa-check"></i></i>
             Confirm
           </button>
           <button 
-            *ngIf="booking.status === 'confirmed'"
+            *ngIf="booking.status === 0"
+            class="btn-danger" 
+            (click)="rejectBooking(booking.id)">
+            <i class="btn-icon"><i class="fas fa-times"></i></i>
+            Reject
+          </button>
+          
+          <!-- Confirmed Status Actions -->
+          <button 
+            *ngIf="booking.status === 1"
             class="btn-primary" 
-            (click)="updateBookingStatus(booking.id, 'in-progress')">
-            <i class="btn-icon">🚀</i>
+            (click)="startBooking(booking.id)">
+            <i class="btn-icon"><i class="fas fa-play"></i></i>
             Start Job
           </button>
+          
+          <!-- In Progress Status Actions -->
           <button 
-            *ngIf="booking.status === 'in-progress'"
+            *ngIf="booking.status === 2"
             class="btn-success" 
-            (click)="updateBookingStatus(booking.id, 'completed')">
-            <i class="btn-icon">✅</i>
+            (click)="completeBooking(booking.id)">
+            <i class="btn-icon"><i class="fas fa-check-circle"></i></i>
             Complete
-          </button>
-          <button 
-            *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
-            class="btn-secondary" 
-            (click)="updateBookingStatus(booking.id, 'cancelled')">
-            <i class="btn-icon">❌</i>
-            Cancel
           </button>
         </div>
       </div>
@@ -211,3 +224,14 @@
     </div>
   </div>
 </div>
+
+<!-- Booking Details Modal -->
+<app-booking-details
+  *ngIf="showBookingDetails && selectedBooking"
+  [booking]="selectedBooking"
+  [service]="selectedService"
+  [assembler]="selectedAssembler"
+  (close)="closeBookingDetails()"
+  (cancel)="updateBookingStatus($event, 'cancelled')"
+  (rate)="rateBooking($event)">
+</app-booking-details>

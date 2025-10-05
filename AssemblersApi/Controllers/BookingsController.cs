@@ -1,142 +1,165 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using AssemblersApi.Data;
-using AssemblersApi.Models;
+using AssemblersApi.Application.DTOs;
+using AssemblersApi.Application.Interfaces;
+using AssemblersApi.Domain.Enums;
 
-namespace AssemblersApi.Controllers
+namespace AssemblersApi.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class BookingsController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class BookingsController : ControllerBase
+    private readonly IBookingService _bookingService;
+
+    public BookingsController(IBookingService bookingService)
     {
-        private readonly AssemblersDbContext _context;
+        _bookingService = bookingService;
+    }
 
-        public BookingsController(AssemblersDbContext context)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<BookingDto>>> GetBookings()
+    {
+        var bookings = await _bookingService.GetAllAsync();
+        return Ok(bookings);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<BookingDto>> GetBooking(int id)
+    {
+        var booking = await _bookingService.GetByIdAsync(id);
+        if (booking == null)
         {
-            _context = context;
+            return NotFound();
         }
+        return Ok(booking);
+    }
 
-        // GET: api/bookings
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
+    [HttpPost]
+    public async Task<ActionResult<BookingDto>> CreateBooking(CreateBookingDto createBookingDto)
+    {
+        try
         {
-            return await _context.Bookings
-                .Include(b => b.Customer)
-                .Include(b => b.Assembler)
-                .ThenInclude(a => a.User)
-                .Include(b => b.Service)
-                .ToListAsync();
+            var booking = await _bookingService.CreateAsync(createBookingDto);
+            return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking);
         }
-
-        // GET: api/bookings/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Booking>> GetBooking(Guid id)
+        catch (InvalidOperationException ex)
         {
-            var booking = await _context.Bookings
-                .Include(b => b.Customer)
-                .Include(b => b.Assembler)
-                .ThenInclude(a => a.User)
-                .Include(b => b.Service)
-                .FirstOrDefaultAsync(b => b.Id == id);
-
-            if (booking == null)
-            {
-                return NotFound();
-            }
-
-            return booking;
+            return BadRequest(ex.Message);
         }
+    }
 
-        // GET: api/bookings/by-customer/5
-        [HttpGet("by-customer/{customerId}")]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByCustomer(Guid customerId)
+    [HttpPut("{id}/status")]
+    public async Task<ActionResult<BookingDto>> UpdateBookingStatus(int id, UpdateBookingStatusDto updateDto)
+    {
+        try
         {
-            return await _context.Bookings
-                .Include(b => b.Customer)
-                .Include(b => b.Assembler)
-                .ThenInclude(a => a.User)
-                .Include(b => b.Service)
-                .Where(b => b.CustomerId == customerId)
-                .ToListAsync();
+            var booking = await _bookingService.UpdateStatusAsync(id, updateDto);
+            return Ok(booking);
         }
-
-        // GET: api/bookings/by-assembler/5
-        [HttpGet("by-assembler/{assemblerId}")]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingsByAssembler(Guid assemblerId)
+        catch (InvalidOperationException ex)
         {
-            return await _context.Bookings
-                .Include(b => b.Customer)
-                .Include(b => b.Assembler)
-                .ThenInclude(a => a.User)
-                .Include(b => b.Service)
-                .Where(b => b.AssemblerId == assemblerId)
-                .ToListAsync();
+            return BadRequest(ex.Message);
         }
+    }
 
-        // POST: api/bookings
-        [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
+    [HttpGet("customer/{customerId}")]
+    public async Task<ActionResult<IEnumerable<BookingDto>>> GetBookingsByCustomer(int customerId)
+    {
+        var bookings = await _bookingService.GetByCustomerIdAsync(customerId);
+        return Ok(bookings);
+    }
+
+    [HttpGet("assembler/{assemblerId}")]
+    public async Task<ActionResult<IEnumerable<BookingDto>>> GetBookingsByAssembler(int assemblerId)
+    {
+        var bookings = await _bookingService.GetByAssemblerIdAsync(assemblerId);
+        return Ok(bookings);
+    }
+
+    [HttpGet("availability")]
+    public async Task<ActionResult<bool>> CheckAvailability(
+        [FromQuery] int assemblerId,
+        [FromQuery] DateTime date,
+        [FromQuery] TimeSpan startTime,
+        [FromQuery] TimeSpan endTime)
+    {
+        var isAvailable = await _bookingService.IsTimeSlotAvailableAsync(assemblerId, date, startTime, endTime);
+        return Ok(isAvailable);
+    }
+
+    [HttpPut("{id}/confirm")]
+    public async Task<ActionResult<BookingDto>> ConfirmBooking(int id)
+    {
+        try
         {
-            booking.Id = Guid.NewGuid();
-            booking.CreatedAt = DateTime.UtcNow;
-            booking.UpdatedAt = DateTime.UtcNow;
-
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
+            var updateDto = new UpdateBookingStatusDto { Status = BookingStatus.Confirmed };
+            var booking = await _bookingService.UpdateStatusAsync(id, updateDto);
+            return Ok(booking);
         }
-
-        // PUT: api/bookings/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBooking(Guid id, Booking booking)
+        catch (InvalidOperationException ex)
         {
-            if (id != booking.Id)
-            {
-                return BadRequest();
-            }
-
-            booking.UpdatedAt = DateTime.UtcNow;
-            _context.Entry(booking).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BookingExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return BadRequest(ex.Message);
         }
+    }
 
-        // DELETE: api/bookings/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBooking(Guid id)
+    [HttpPut("{id}/reject")]
+    public async Task<ActionResult<BookingDto>> RejectBooking(int id)
+    {
+        try
         {
-            var booking = await _context.Bookings.FindAsync(id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-
-            _context.Bookings.Remove(booking);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var updateDto = new UpdateBookingStatusDto { Status = BookingStatus.Rejected };
+            var booking = await _bookingService.UpdateStatusAsync(id, updateDto);
+            return Ok(booking);
         }
-
-        private bool BookingExists(Guid id)
+        catch (InvalidOperationException ex)
         {
-            return _context.Bookings.Any(e => e.Id == id);
+            return BadRequest(ex.Message);
         }
+    }
+
+    [HttpPut("{id}/start")]
+    public async Task<ActionResult<BookingDto>> StartBooking(int id)
+    {
+        try
+        {
+            var updateDto = new UpdateBookingStatusDto { Status = BookingStatus.InProgress };
+            var booking = await _bookingService.UpdateStatusAsync(id, updateDto);
+            return Ok(booking);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut("{id}/complete")]
+    public async Task<ActionResult<BookingDto>> CompleteBooking(int id)
+    {
+        try
+        {
+            var updateDto = new UpdateBookingStatusDto { Status = BookingStatus.Completed };
+            var booking = await _bookingService.UpdateStatusAsync(id, updateDto);
+            return Ok(booking);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("assembler/{assemblerId}/pending")]
+    public async Task<ActionResult<IEnumerable<BookingDto>>> GetPendingBookingsForAssembler(int assemblerId)
+    {
+        var allBookings = await _bookingService.GetByAssemblerIdAsync(assemblerId);
+        var pendingBookings = allBookings.Where(b => b.Status == BookingStatus.Pending);
+        return Ok(pendingBookings);
+    }
+
+    [HttpGet("customer/{customerId}/confirmed")]
+    public async Task<ActionResult<IEnumerable<BookingDto>>> GetConfirmedBookingsForCustomer(int customerId)
+    {
+        var allBookings = await _bookingService.GetByCustomerIdAsync(customerId);
+        var confirmedBookings = allBookings.Where(b => b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.InProgress);
+        return Ok(confirmedBookings);
     }
 }

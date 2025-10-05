@@ -1,51 +1,71 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgIf, NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Service } from '../../../../core/models/service.model';
 import { Assembler } from '../../../../core/models/assembler.model';
-import { Booking } from '../../../../core/models/booking.model';
-import { MockDataService } from '../../../../core/services/mock-data.service';
+import { Booking, BookingStatus } from '../../../../core/models/booking.model';
+import { ServiceService } from '../../../../core/services/service.service';
+import { AssemblerService } from '../../../../core/services/assembler.service';
+import { BookingService } from '../../../../core/services/booking.service';
 import { AuthService } from '../../../../core/services/auth.service';
 
 interface CalendarDay {
-  date: number;
-  fullDate: Date;
-  isCurrentMonth: boolean;
+  day: number;
+  date: Date;
+  enabled: boolean;
+  selected: boolean;
+  isToday: boolean;
+  hasAvailability: boolean;
 }
 
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [CommonModule, NgIf, NgFor, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './booking.component.html',
   styleUrls: ['./booking.component.scss']
 })
 export class BookingComponent implements OnInit {
-  bookingForm: FormGroup;
   service: Service | null = null;
-  serviceId: string | null = null;
-  assemblerId: string | null = null;
-  selectedAssembler: Assembler | null = null;
   assemblers: Assembler[] = [];
-  successMessage: string = '';
-  errorMessage: string = '';
-
-  // Calendar properties
-  currentDate = new Date();
-  currentMonth = this.currentDate.getMonth();
-  currentYear = this.currentDate.getFullYear();
+  selectedAssembler: Assembler | null = null;
   selectedDate: Date | null = null;
   selectedTime: string | null = null;
+  notes: string = '';
+  
+  // Booking steps
+  currentStep: number = 1;
+  
+  // Calendar
+  currentYear: number = new Date().getFullYear();
+  currentMonth: number = new Date().getMonth();
   calendarDays: CalendarDay[] = [];
-  weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  availableTimeSlots: string[] = [];
+  
+  // Time slots
+  availableTimeSlots: string[] = [
+    '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'
+  ];
+  
+  // Form
+  bookingForm: FormGroup;
+  
+  // State
+  isSubmitting: boolean = false;
+  errorMessage: string = '';
+  
+  // Route params
+  serviceId: number | null = null;
+  assemblerId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
-    private mockDataService: MockDataService,
+    private serviceService: ServiceService,
+    private assemblerService: AssemblerService,
+    private bookingService: BookingService,
     private authService: AuthService
   ) {
     this.bookingForm = this.fb.group({
@@ -54,43 +74,175 @@ export class BookingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.serviceId = this.route.snapshot.paramMap.get('serviceId');
-    this.assemblerId = this.route.snapshot.paramMap.get('assemblerId');
+    const serviceIdParam = this.route.snapshot.paramMap.get('serviceId');
+    const assemblerIdParam = this.route.snapshot.paramMap.get('assemblerId');
+    
+    this.serviceId = serviceIdParam ? parseInt(serviceIdParam, 10) : null;
+    this.assemblerId = assemblerIdParam ? parseInt(assemblerIdParam, 10) : null;
     
     if (this.serviceId) {
-      this.service = this.mockDataService.getServiceById(this.serviceId) ?? null;
-      this.assemblers = this.mockDataService.getAssemblersByService(this.serviceId);
-      this.generateCalendar();
+      this.loadService();
+      this.loadAssemblers();
     } else {
       this.errorMessage = 'Service not found';
     }
   }
 
-  selectAssembler(assemblerId: string): void {
-    this.assemblerId = assemblerId;
+  private loadService(): void {
+    if (!this.serviceId) return;
+    
+    this.serviceService.getServiceById(this.serviceId).subscribe({
+      next: (service) => {
+        this.service = service;
+      },
+      error: (err) => {
+        console.error('Error loading service:', err);
+        this.errorMessage = 'Service not found';
+      }
+    });
+  }
+
+  private loadAssemblers(): void {
+    this.assemblerService.getAssemblers().subscribe({
+      next: (assemblers) => {
+        this.assemblers = assemblers;
+        if (this.assemblerId) {
+          this.selectedAssembler = this.assemblers.find(a => a.id === this.assemblerId) || null;
+          if (this.selectedAssembler) {
+            this.currentStep = 2;
+            this.generateCalendar();
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Error loading assemblers:', err);
+      }
+    });
+  }
+
+  selectAssembler(assemblerId: number): void {
     this.selectedAssembler = this.assemblers.find(a => a.id === assemblerId) || null;
     this.selectedDate = null;
     this.selectedTime = null;
     this.generateCalendar();
   }
 
+  nextStep(): void {
+    if (this.currentStep < 3) {
+      this.currentStep++;
+    }
+  }
+
+  previousStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
+  }
+
   generateCalendar(): void {
     this.calendarDays = [];
     const firstDay = new Date(this.currentYear, this.currentMonth, 1);
     const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+    const today = new Date();
+    
+    // Get the first day of the week for the first day of the month
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
-
+    
+    // Generate 42 days (6 weeks)
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
       
+      const isCurrentMonth = date.getMonth() === this.currentMonth;
+      const isToday = this.isSameDay(date, today);
+      const isPast = date < today && !isToday;
+      const hasAvailability = this.selectedAssembler ? this.isAssemblerAvailableOnDate(date) : false;
+      
       this.calendarDays.push({
-        date: date.getDate(),
-        fullDate: new Date(date),
-        isCurrentMonth: date.getMonth() === this.currentMonth
+        day: date.getDate(),
+        date: new Date(date),
+        enabled: isCurrentMonth && !isPast,
+        selected: this.selectedDate ? this.isSameDay(date, this.selectedDate) : false,
+        isToday: isToday,
+        hasAvailability: hasAvailability
       });
     }
+  }
+
+  private isSameDay(date1: Date, date2: Date): boolean {
+    return date1.getDate() === date2.getDate() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getFullYear() === date2.getFullYear();
+  }
+
+  private isAssemblerAvailableOnDate(date: Date): boolean {
+    if (!this.selectedAssembler?.availability) return true;
+    
+    const dayOfWeek = date.getDay();
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dayName = dayNames[dayOfWeek];
+    
+    const dayAvailability = this.selectedAssembler.availability.find(da => 
+      da.dayOfWeek === dayOfWeek
+    );
+    
+    return dayAvailability ? dayAvailability.available : true;
+  }
+
+  selectDate(day: CalendarDay): void {
+    if (!day.enabled) return;
+    
+    // Clear previous selection
+    this.calendarDays.forEach(d => d.selected = false);
+    
+    // Set new selection
+    day.selected = true;
+    this.selectedDate = day.date;
+    this.selectedTime = null;
+    
+    // Generate available time slots for this date
+    this.generateTimeSlots();
+  }
+
+  private generateTimeSlots(): void {
+    if (!this.selectedDate || !this.selectedAssembler?.availability) {
+      this.availableTimeSlots = [
+        '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'
+      ];
+      return;
+    }
+    
+    const dayOfWeek = this.selectedDate.getDay();
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dayName = dayNames[dayOfWeek];
+    
+    const dayAvailability = this.selectedAssembler.availability.find(da => 
+      da.dayOfWeek === dayOfWeek
+    );
+    
+    if (dayAvailability && dayAvailability.available) {
+      // Generate time slots based on availability
+      const startHour = parseInt(dayAvailability.start.split(':')[0]);
+      const endHour = parseInt(dayAvailability.end.split(':')[0]);
+      
+      this.availableTimeSlots = [];
+      for (let hour = startHour; hour < endHour; hour++) {
+        this.availableTimeSlots.push(`${hour.toString().padStart(2, '0')}:00`);
+      }
+    } else {
+      this.availableTimeSlots = [];
+    }
+  }
+
+  selectTime(time: string): void {
+    this.selectedTime = time;
+  }
+
+  isTimeSlotAvailable(time: string): boolean {
+    // For now, all time slots are available
+    // In a real app, you'd check against existing bookings
+    return true;
   }
 
   previousMonth(): void {
@@ -111,112 +263,28 @@ export class BookingComponent implements OnInit {
     this.generateCalendar();
   }
 
-  getCurrentMonthYear(): string {
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'];
-    return `${monthNames[this.currentMonth]} ${this.currentYear}`;
+  getMonthName(month: number): string {
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return monthNames[month];
   }
 
-  isDayAvailable(day: CalendarDay): boolean {
-    if (!this.selectedAssembler?.availability) return true;
-    
-    const dayOfWeek = day.fullDate.getDay();
-    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const dayName = dayNames[dayOfWeek] as keyof typeof this.selectedAssembler.availability;
-    
-    const availability = this.selectedAssembler.availability[dayName];
-    return availability.available && day.isCurrentMonth;
-  }
-
-  isDaySelected(day: CalendarDay): boolean {
-    return this.selectedDate?.getTime() === day.fullDate.getTime();
-  }
-
-  isToday(day: CalendarDay): boolean {
-    const today = new Date();
-    return day.fullDate.toDateString() === today.toDateString();
-  }
-
-  selectDate(day: CalendarDay): void {
-    if (!this.isDayAvailable(day)) return;
-    
-    this.selectedDate = day.fullDate;
-    this.selectedTime = null;
-    this.generateTimeSlots();
-  }
-
-  generateTimeSlots(): void {
-    if (!this.selectedAssembler?.availability || !this.selectedDate) return;
-    
-    const dayOfWeek = this.selectedDate.getDay();
-    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const dayName = dayNames[dayOfWeek] as keyof typeof this.selectedAssembler.availability;
-    
-    const availability = this.selectedAssembler.availability[dayName];
-    if (!availability.available) return;
-    
-    const slots: string[] = [];
-    const startHour = parseInt(availability.start.split(':')[0]);
-    const endHour = parseInt(availability.end.split(':')[0]);
-    
-    for (let hour = startHour; hour < endHour; hour++) {
-      slots.push(`${hour.toString().padStart(2, '0')}:00`);
-      slots.push(`${hour.toString().padStart(2, '0')}:30`);
-    }
-    
-    this.availableTimeSlots = slots;
-  }
-
-  selectTime(time: string): void {
-    this.selectedTime = time;
-  }
-
-  isAssemblerAvailable(assemblerId: string): boolean {
+  isAssemblerAvailable(assemblerId: number): boolean {
     const assembler = this.assemblers.find(a => a.id === assemblerId);
     if (!assembler?.availability) return true;
     
     const today = new Date();
     const dayOfWeek = today.getDay();
     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const dayName = dayNames[dayOfWeek] as keyof typeof assembler.availability;
+    const dayName = dayNames[dayOfWeek];
     
-    return assembler.availability[dayName].available;
-  }
-
-  onSubmit(): void {
-    if (this.bookingForm.invalid || !this.serviceId || !this.authService.currentUser || !this.selectedDate || !this.selectedTime) {
-      return;
-    }
-
-    const bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'> = {
-      serviceId: this.serviceId,
-      assemblerId: this.assemblerId || this.assemblers[0]?.id,
-      customerId: this.authService.currentUser!.id,
-      date: new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth(), this.selectedDate.getDate(), 
-        parseInt(this.selectedTime!.split(':')[0]), parseInt(this.selectedTime!.split(':')[1])),
-      status: 'pending' as Booking['status'],
-      notes: this.bookingForm.value.notes
-    };
-
-    this.mockDataService.createBooking(bookingData).subscribe({
-      next: (booking) => {
-        this.successMessage = 'Booking created successfully!';
-        this.errorMessage = '';
-        // Redirect after a short delay
-        setTimeout(() => {
-          this.router.navigate(['/dashboard-customer']);
-        }, 2000);
-      },
-      error: (err) => {
-        this.errorMessage = err.message || 'Failed to create booking. Please try again.';
-        this.successMessage = '';
-      }
-    });
-  }
-
-  getMinDate(): string {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
+    const dayAvailability = assembler.availability.find(da => 
+      da.dayOfWeek === dayOfWeek
+    );
+    
+    return dayAvailability ? dayAvailability.available : true;
   }
 
   getStarRating(rating: number): string {
@@ -224,22 +292,61 @@ export class BookingComponent implements OnInit {
     const halfStar = rating % 1 >= 0.5 ? 1 : 0;
     const emptyStars = 5 - fullStars - halfStar;
     
-    return '★'.repeat(fullStars) + (halfStar ? '☆' : '') + '☆'.repeat(emptyStars);
+    return '<i class="fas fa-star"></i>'.repeat(fullStars) + 
+           (halfStar ? '<i class="fas fa-star-half-alt"></i>' : '') + 
+           '<i class="far fa-star"></i>'.repeat(emptyStars);
   }
 
-  goBack(): void {
-    if (this.selectedTime) {
-      this.selectedTime = null;
-    } else if (this.selectedDate) {
-      this.selectedDate = null;
-    } else if (this.selectedAssembler) {
-      this.selectedAssembler = null;
-      this.assemblerId = null;
+  submitBooking(): void {
+    if (!this.selectedAssembler || !this.serviceId || !this.selectedDate || !this.selectedTime) {
+      return;
     }
-  }
 
-  retryBooking(): void {
+    const currentUser = this.authService.currentUser;
+    if (!currentUser) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.isSubmitting = true;
     this.errorMessage = '';
-    this.successMessage = '';
+
+    // Combine date and time
+    const bookingDateTime = new Date(this.selectedDate);
+    const [hours, minutes] = this.selectedTime.split(':').map(Number);
+    bookingDateTime.setHours(hours, minutes, 0, 0);
+
+    // Calculate end time (assuming 1 hour duration for now)
+    const endDateTime = new Date(bookingDateTime);
+    endDateTime.setHours(hours + 1, minutes, 0, 0);
+
+    // Get service price
+    const servicePrice = this.service?.price || 0;
+
+    const newBooking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'> = {
+      customerId: currentUser.id,
+      assemblerId: this.selectedAssembler.id,
+      serviceId: this.serviceId,
+      date: bookingDateTime.toISOString().split('T')[0], // Just the date part
+      startTime: this.selectedTime + ':00', // Add seconds
+      endTime: endDateTime.toTimeString().split(' ')[0], // Format as HH:MM:SS
+      status: BookingStatus.Pending,
+      notes: this.notes,
+      totalPrice: servicePrice
+    };
+
+    this.bookingService.createBooking(newBooking).subscribe({
+      next: (booking) => {
+        this.isSubmitting = false;
+        // Show success message
+        alert('Booking created successfully!');
+        this.router.navigate(['/dashboard-customer']);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.errorMessage = 'Failed to create booking. Please try again.';
+        console.error('Error creating booking:', err);
+      }
+    });
   }
 }

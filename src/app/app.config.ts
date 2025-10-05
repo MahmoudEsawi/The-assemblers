@@ -5,7 +5,6 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { CategoryService } from './core/services/category.service';
-import { MockDataService } from './core/services/mock-data.service';
 import { AuthService } from './core/services/auth.service';
 import { ServiceService } from './core/services/service.service';
 import { AssemblerService } from './core/services/assembler.service';
@@ -25,7 +24,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideAnimations(),
     CategoryService,
-    MockDataService,
     AuthService,
     ServiceService,
     AssemblerService,

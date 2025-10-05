@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
@@ -28,7 +28,7 @@ export class RegisterComponent {
       confirmPassword: ['', Validators.required],
       phone: [''],
       address: [''],
-      role: ['customer', Validators.required],
+      role: ['Customer', Validators.required],
       // Assembler specific fields
       specialization: [''],
       description: [''],
@@ -47,7 +47,7 @@ export class RegisterComponent {
   }
 
   onRoleChange(): void {
-    this.isAssembler = this.registerForm.value.role === 'assembler';
+    this.isAssembler = this.registerForm.value.role === 'Assembler';
     
     if (this.isAssembler) {
       this.registerForm.get('specialization')?.setValidators(Validators.required);
@@ -84,9 +84,9 @@ export class RegisterComponent {
       next: () => {
         // Redirect based on user role
         const user = this.authService.currentUser;
-        if (user?.role === 'customer') {
+        if (user?.role === 'Customer') {
           this.router.navigate(['/dashboard-customer']);
-        } else if (user?.role === 'assembler') {
+        } else if (user?.role === 'Assembler') {
           this.router.navigate(['/dashboard-assembler']);
         } else {
           this.router.navigate(['/']);

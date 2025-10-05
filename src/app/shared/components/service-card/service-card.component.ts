@@ -12,7 +12,7 @@ import { Service } from '../../../core/models/service.model';
 })
 export class ServiceCardComponent {
   @Input() service!: Service;
-  @Output() bookService = new EventEmitter<string>();
+  @Output() bookService = new EventEmitter<number>();
 
   onBookService(): void {
     this.bookService.emit(this.service.id);

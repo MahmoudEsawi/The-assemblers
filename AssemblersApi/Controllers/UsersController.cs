@@ -1,120 +1,67 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using AssemblersApi.Data;
-using AssemblersApi.Models;
+using AssemblersApi.Application.DTOs;
+using AssemblersApi.Application.Interfaces;
 
-namespace AssemblersApi.Controllers
+namespace AssemblersApi.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    private readonly IUserService _userService;
+
+    public UsersController(IUserService userService)
     {
-        private readonly AssemblersDbContext _context;
+        _userService = userService;
+    }
 
-        public UsersController(AssemblersDbContext context)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+    {
+        var users = await _userService.GetAllAsync();
+        return Ok(users);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<UserDto>> GetUser(int id)
+    {
+        var user = await _userService.GetByIdAsync(id);
+        if (user == null)
         {
-            _context = context;
+            return NotFound();
         }
+        return Ok(user);
+    }
 
-        // GET: api/users
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+    [HttpPost]
+    public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto createUserDto)
+    {
+        try
         {
-            return await _context.Users.ToListAsync();
+            var user = await _userService.CreateAsync(createUserDto);
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
-
-        // GET: api/users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        catch (InvalidOperationException ex)
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            return BadRequest(ex.Message);
         }
+    }
 
-        // GET: api/users/email/john@example.com
-        [HttpGet("email/{email}")]
-        public async Task<ActionResult<User>> GetUserByEmail(string email)
+    [HttpPost("login")]
+    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+    {
+        var user = await _userService.LoginAsync(loginDto);
+        if (user == null)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            return Unauthorized("Invalid email or password");
         }
+        return Ok(user);
+    }
 
-        // POST: api/users
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-            user.Id = Guid.NewGuid();
-            user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = DateTime.UtcNow;
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
-        }
-
-        // PUT: api/users/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
-        {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
-            user.UpdatedAt = DateTime.UtcNow;
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // DELETE: api/users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool UserExists(Guid id)
-        {
-            return _context.Users.Any(e => e.Id == id);
-        }
+    [HttpGet("email-exists/{email}")]
+    public async Task<ActionResult<bool>> EmailExists(string email)
+    {
+        var exists = await _userService.EmailExistsAsync(email);
+        return Ok(exists);
     }
 }

@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Service } from '../../../../core/models/service.model';
 import { Assembler } from '../../../../core/models/assembler.model';
-import { MockDataService } from '../../../../core/services/mock-data.service';
+import { ServiceService } from '../../../../core/services/service.service';
+import { AssemblerService } from '../../../../core/services/assembler.service';
 import { AssemblerCardComponent } from '../../../../shared/components/assembler-card/assembler-card.component';
 
 @Component({
@@ -16,29 +17,48 @@ import { AssemblerCardComponent } from '../../../../shared/components/assembler-
 export class ServiceAssemblersComponent implements OnInit {
   service: Service | null = null;
   assemblers: Assembler[] = [];
-  serviceId: string | null = null;
+  serviceId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private mockDataService: MockDataService
+    private serviceService: ServiceService,
+    private assemblerService: AssemblerService
   ) {}
 
   ngOnInit(): void {
-    this.serviceId = this.route.snapshot.paramMap.get('serviceId');
+    const serviceIdParam = this.route.snapshot.paramMap.get('serviceId');
+    this.serviceId = serviceIdParam ? parseInt(serviceIdParam, 10) : null;
+    
     if (this.serviceId) {
-      this.service = this.mockDataService.getServiceById(this.serviceId) || null;
-      this.assemblers = this.mockDataService.getAssemblersByService(this.serviceId);
+      this.serviceService.getServiceById(this.serviceId).subscribe({
+        next: (service) => {
+          this.service = service;
+        },
+        error: (err) => {
+          console.error('Error loading service:', err);
+        }
+      });
+
+      this.assemblerService.getAssemblers().subscribe({
+        next: (assemblers) => {
+          // For now, show all assemblers since we don't have service-assembler relationship in the API
+          this.assemblers = assemblers;
+        },
+        error: (err) => {
+          console.error('Error loading assemblers:', err);
+        }
+      });
     }
   }
 
-  onBookService(assemblerId: string): void {
+  onBookService(assemblerId: number): void {
     if (this.serviceId) {
       this.router.navigate(['/booking', this.serviceId, assemblerId]);
     }
   }
 
-  onViewProfile(assemblerId: string): void {
+  onViewProfile(assemblerId: number): void {
     this.router.navigate(['/profile', assemblerId]);
   }
 
@@ -46,7 +66,9 @@ export class ServiceAssemblersComponent implements OnInit {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5 ? 1 : 0;
     const emptyStars = 5 - fullStars - halfStar;
-
-    return '★'.repeat(fullStars) + (halfStar ? '☆' : '') + '☆'.repeat(emptyStars);
+    
+    return '<i class="fas fa-star"></i>'.repeat(fullStars) + 
+           (halfStar ? '<i class="fas fa-star-half-alt"></i>' : '') + 
+           '<i class="far fa-star"></i>'.repeat(emptyStars);
   }
 }

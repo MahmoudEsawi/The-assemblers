@@ -18,7 +18,7 @@ export class ReviewCardComponent {
     return Array(5).fill(0).map((_, i) => i < Math.floor(rating) ? 1 : (i < rating ? 0.5 : 0));
   }
   
-  formatDate(date: Date): string {
+  formatDate(date: string): string {
     return new Date(date).toLocaleDateString();
   }
 }

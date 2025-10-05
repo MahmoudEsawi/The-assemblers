@@ -1,13 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Booking } from '../../../../core/models/booking.model';
-import { MockDataService } from '../../../../core/services/mock-data.service';
+import { Booking, BookingStatus } from '../../../../core/models/booking.model';
+import { Service } from '../../../../core/models/service.model';
+import { Assembler } from '../../../../core/models/assembler.model';
+import { BookingService } from '../../../../core/services/booking.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ServiceService } from '../../../../core/services/service.service';
+import { AssemblerService } from '../../../../core/services/assembler.service';
+import { BookingDetailsComponent } from '../../../../shared/components/booking-details/booking-details.component';
 
 @Component({
   selector: 'app-dashboard-assembler',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BookingDetailsComponent],
   templateUrl: './dashboard-assembler.component.html',
   styleUrls: ['./dashboard-assembler.component.scss']
 })
@@ -17,37 +22,122 @@ export class DashboardAssemblerComponent implements OnInit {
   selectedFilter: string = 'all';
   filteredBookings: Booking[] = [];
   isAvailable: boolean = true;
+  services: Service[] = [];
+  assemblers: Assembler[] = [];
+  
+  // Modal state
+  selectedBooking: Booking | null = null;
+  selectedService: Service | null = null;
+  selectedAssembler: Assembler | null = null;
+  showBookingDetails = false;
 
   constructor(
-    private mockDataService: MockDataService,
-    private authService: AuthService
+    private bookingService: BookingService,
+    private authService: AuthService,
+    private serviceService: ServiceService,
+    private assemblerService: AssemblerService
   ) {}
 
   ngOnInit(): void {
     this.user = this.authService.currentUser;
-    this.loadBookings();
+    this.loadServices();
+    // Load assemblers and then bookings
+    this.loadAssemblersAndBookings();
     this.filteredBookings = this.bookings;
   }
 
-  loadBookings(): void {
-    const allBookings = this.mockDataService.getBookings();
-    this.bookings = allBookings.filter(booking => booking.assemblerId === this.user.id);
+  loadAssemblersAndBookings(): void {
+    this.assemblerService.getAssemblers().subscribe({
+      next: (assemblers) => {
+        this.assemblers = assemblers;
+        // Now load bookings after assemblers are available
+        this.loadBookings();
+      },
+      error: (err) => {
+        console.error('Error loading assemblers:', err);
+      }
+    });
   }
 
-  getStatusClass(status: string): string {
+  loadServices(): void {
+    this.serviceService.getServices().subscribe({
+      next: (services) => {
+        this.services = services;
+      },
+      error: (err) => {
+        console.error('Error loading services:', err);
+      }
+    });
+  }
+
+  loadAssemblers(): void {
+    this.assemblerService.getAssemblers().subscribe({
+      next: (assemblers) => {
+        this.assemblers = assemblers;
+      },
+      error: (err) => {
+        console.error('Error loading assemblers:', err);
+      }
+    });
+  }
+
+  loadBookings(): void {
+    if (!this.user?.id) return;
+    
+    // Find the assembler profile for this user
+    const assemblerProfile = this.assemblers.find(a => a.userId === this.user.id);
+    if (!assemblerProfile) {
+      console.error('No assembler profile found for user:', this.user.id);
+      return;
+    }
+    
+    // Use the actual assembler ID (not user ID)
+    this.bookingService.getBookingsByAssembler(assemblerProfile.id).subscribe({
+      next: (bookings) => {
+        this.bookings = bookings;
+        this.filteredBookings = this.bookings;
+      },
+      error: (err) => {
+        console.error('Error loading bookings:', err);
+      }
+    });
+  }
+
+  getStatusClass(status: BookingStatus): string {
     switch (status) {
-      case 'pending':
+      case BookingStatus.Pending:
         return 'status-pending';
-      case 'confirmed':
+      case BookingStatus.Confirmed:
         return 'status-confirmed';
-      case 'in-progress':
+      case BookingStatus.InProgress:
         return 'status-in-progress';
-      case 'completed':
+      case BookingStatus.Completed:
         return 'status-completed';
-      case 'cancelled':
+      case BookingStatus.Cancelled:
         return 'status-cancelled';
+      case BookingStatus.Rejected:
+        return 'status-rejected';
       default:
         return '';
+    }
+  }
+
+  getStatusText(status: BookingStatus): string {
+    switch (status) {
+      case BookingStatus.Pending:
+        return 'Pending';
+      case BookingStatus.Confirmed:
+        return 'Confirmed';
+      case BookingStatus.InProgress:
+        return 'In Progress';
+      case BookingStatus.Completed:
+        return 'Completed';
+      case BookingStatus.Cancelled:
+        return 'Cancelled';
+      case BookingStatus.Rejected:
+        return 'Rejected';
+      default:
+        return 'Unknown';
     }
   }
 
@@ -57,61 +147,68 @@ export class DashboardAssemblerComponent implements OnInit {
     if (filter === 'all') {
       this.filteredBookings = this.bookings;
     } else {
-      this.filteredBookings = this.bookings.filter(booking => booking.status === filter);
+      // Convert string filter to enum value
+      const statusFilter = this.getStatusFromString(filter);
+      this.filteredBookings = this.bookings.filter(booking => booking.status === statusFilter);
+    }
+  }
+
+  private getStatusFromString(statusString: string): BookingStatus {
+    switch (statusString) {
+      case 'pending': return BookingStatus.Pending;
+      case 'confirmed': return BookingStatus.Confirmed;
+      case 'in-progress': return BookingStatus.InProgress;
+      case 'completed': return BookingStatus.Completed;
+      case 'cancelled': return BookingStatus.Cancelled;
+      case 'rejected': return BookingStatus.Rejected;
+      default: return BookingStatus.Pending;
     }
   }
 
   getPendingBookings(): number {
-    return this.bookings.filter(booking => booking.status === 'pending').length;
+    return this.bookings.filter(booking => booking.status === BookingStatus.Pending).length;
   }
 
   getConfirmedBookings(): number {
-    return this.bookings.filter(booking => booking.status === 'confirmed').length;
+    return this.bookings.filter(booking => booking.status === BookingStatus.Confirmed).length;
   }
 
   getInProgressBookings(): number {
-    return this.bookings.filter(booking => booking.status === 'in-progress').length;
+    return this.bookings.filter(booking => booking.status === BookingStatus.InProgress).length;
   }
 
   getCompletedBookings(): number {
-    return this.bookings.filter(booking => booking.status === 'completed').length;
+    return this.bookings.filter(booking => booking.status === BookingStatus.Completed).length;
+  }
+  getServiceName(serviceId: number): string {
+    const service = this.services.find(s => s.id === serviceId);
+    return service?.name || `Service ${serviceId}`;
   }
 
-  // Customer methods
-  getCustomerName(customerId: string): string {
-    const customer = this.mockDataService.getUserById(customerId);
-    return customer ? customer.name : 'Unknown Customer';
+  getServiceDescription(serviceId: number): string {
+    const service = this.services.find(s => s.id === serviceId);
+    return service?.description || 'No description available';
   }
 
-  getCustomerImage(customerId: string): string {
-    const customer = this.mockDataService.getUserById(customerId);
-    return customer ? customer.profileImage : 'assets/default-avatar.png';
+  // Assembler methods
+  getAssemblerName(assemblerId: number): string {
+    const assembler = this.assemblers.find(a => a.id === assemblerId);
+    return assembler?.user.name || `Assembler ${assemblerId}`;
   }
 
-  getCustomerLocation(customerId: string): string {
-    const customer = this.mockDataService.getUserById(customerId);
-    return customer ? customer.address : 'Location not specified';
+  getAssemblerImage(assemblerId: number): string {
+    const assembler = this.assemblers.find(a => a.id === assemblerId);
+    return assembler?.user.profileImage || 'assets/default-avatar.png';
   }
 
-  getCustomerRating(customerId: string): string {
-    // For now, return a default rating
-    return '4.5';
+  getAssemblerSpecialization(assemblerId: number): string {
+    const assembler = this.assemblers.find(a => a.id === assemblerId);
+    return assembler?.specialization || 'General Services';
   }
 
-  // Service methods
-  getServiceName(serviceId: string): string {
-    const service = this.mockDataService.getServiceById(serviceId);
-    return service ? service.name : 'Unknown Service';
-  }
-
-  getServiceDescription(serviceId: string): string {
-    const service = this.mockDataService.getServiceById(serviceId);
-    return service ? service.description : 'No description available';
-  }
-
-  getServicePrice(serviceId: string): string {
-    const service = this.mockDataService.getServiceById(serviceId);
-    return service ? service.price.toString() : '0';
+  getAssemblerRating(assemblerId: number): string {
+    const assembler = this.assemblers.find(a => a.id === assemblerId);
+    return assembler?.averageRating?.toString() || '4.5';
   }
 
   // Action methods
@@ -126,17 +223,100 @@ export class DashboardAssemblerComponent implements OnInit {
     console.log('Availability toggled:', this.isAvailable);
   }
 
-  viewBookingDetails(bookingId: string): void {
-    // Implement booking details modal or navigation
-    console.log('View booking details:', bookingId);
-  }
-
-  updateBookingStatus(bookingId: string, status: string): void {
+  viewBookingDetails(bookingId: number): void {
     const booking = this.bookings.find(b => b.id === bookingId);
     if (booking) {
-      booking.status = status as any;
+      this.selectedBooking = booking;
+      this.selectedService = this.services.find(s => s.id === booking.serviceId) || null;
+      this.selectedAssembler = this.assemblers.find(a => a.id === booking.assemblerId) || null;
+      this.showBookingDetails = true;
+    }
+  }
+
+  closeBookingDetails(): void {
+    this.showBookingDetails = false;
+    this.selectedBooking = null;
+    this.selectedService = null;
+    this.selectedAssembler = null;
+  }
+
+  rateBooking(bookingId: number): void {
+    // Implement rating modal
+    console.log('Rate booking:', bookingId);
+    this.closeBookingDetails();
+  }
+
+  updateBookingStatus(bookingId: number, status: BookingStatus): void {
+    const booking = this.bookings.find(b => b.id === bookingId);
+    if (booking) {
+      booking.status = status;
       // In a real app, this would call a service to update the booking
       this.setFilter(this.selectedFilter); // Refresh filtered bookings
     }
+  }
+
+  // Booking confirmation methods
+  confirmBooking(bookingId: number): void {
+    this.bookingService.confirmBooking(bookingId).subscribe({
+      next: (updatedBooking) => {
+        const index = this.bookings.findIndex(b => b.id === bookingId);
+        if (index !== -1) {
+          this.bookings[index] = updatedBooking;
+          this.setFilter(this.selectedFilter);
+        }
+        console.log('Booking confirmed:', updatedBooking);
+      },
+      error: (err) => {
+        console.error('Error confirming booking:', err);
+      }
+    });
+  }
+
+  rejectBooking(bookingId: number): void {
+    this.bookingService.rejectBooking(bookingId).subscribe({
+      next: (updatedBooking) => {
+        const index = this.bookings.findIndex(b => b.id === bookingId);
+        if (index !== -1) {
+          this.bookings[index] = updatedBooking;
+          this.setFilter(this.selectedFilter);
+        }
+        console.log('Booking rejected:', updatedBooking);
+      },
+      error: (err) => {
+        console.error('Error rejecting booking:', err);
+      }
+    });
+  }
+
+  startBooking(bookingId: number): void {
+    this.bookingService.startBooking(bookingId).subscribe({
+      next: (updatedBooking) => {
+        const index = this.bookings.findIndex(b => b.id === bookingId);
+        if (index !== -1) {
+          this.bookings[index] = updatedBooking;
+          this.setFilter(this.selectedFilter);
+        }
+        console.log('Booking started:', updatedBooking);
+      },
+      error: (err) => {
+        console.error('Error starting booking:', err);
+      }
+    });
+  }
+
+  completeBooking(bookingId: number): void {
+    this.bookingService.completeBooking(bookingId).subscribe({
+      next: (updatedBooking) => {
+        const index = this.bookings.findIndex(b => b.id === bookingId);
+        if (index !== -1) {
+          this.bookings[index] = updatedBooking;
+          this.setFilter(this.selectedFilter);
+        }
+        console.log('Booking completed:', updatedBooking);
+      },
+      error: (err) => {
+        console.error('Error completing booking:', err);
+      }
+    });
   }
 }

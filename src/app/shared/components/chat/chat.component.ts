@@ -13,7 +13,7 @@ import { NotificationService } from '../../../core/services/notification.service
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit, OnDestroy {
-  @Input() receiverId: string = '';
+  @Input() receiverId: number = 0;
   @Input() receiverName: string = '';
   @Output() closeChat = new EventEmitter<void>();
 
@@ -51,14 +51,14 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     // Subscribe to typing status
     this.chatService.typing$.subscribe(typing => {
-      if (typing.userId === this.receiverId) {
+      if (typing.userId === this.receiverId.toString()) {
         this.isTyping = typing.isTyping;
       }
     });
 
     // Subscribe to online status
     this.chatService.onlineUsers$.subscribe(users => {
-      this.isOnline = users.includes(this.receiverId);
+      this.isOnline = users.includes(this.receiverId.toString());
     });
 
     // Create or join room
@@ -69,13 +69,13 @@ export class ChatComponent implements OnInit, OnDestroy {
     const currentUser = this.authService.currentUser;
     if (currentUser) {
       // Create room with both users
-      this.chatService.createRoom([currentUser.id, this.receiverId]);
+      this.chatService.createRoom([currentUser.id.toString(), this.receiverId.toString()]);
     }
   }
 
   sendMessage(): void {
     if (this.newMessage.trim() && this.receiverId) {
-      this.chatService.sendMessage(this.receiverId, this.newMessage.trim());
+      this.chatService.sendMessage(this.receiverId.toString(), this.newMessage.trim());
       this.newMessage = '';
       this.stopTyping();
     }
@@ -92,7 +92,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private startTyping(): void {
     if (!this.isTyping) {
-      this.chatService.sendTyping(this.receiverId, true);
+      this.chatService.sendTyping(this.receiverId.toString(), true);
       this.isTyping = true;
     }
 
@@ -109,7 +109,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private stopTyping(): void {
     if (this.isTyping) {
-      this.chatService.sendTyping(this.receiverId, false);
+      this.chatService.sendTyping(this.receiverId.toString(), false);
       this.isTyping = false;
     }
   }
@@ -131,7 +131,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   isMyMessage(message: ChatMessage): boolean {
-    return message.senderId === this.authService.currentUser?.id;
+    return message.senderId === this.authService.currentUser?.id.toString();
   }
 
   close(): void {

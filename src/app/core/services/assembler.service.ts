@@ -1,24 +1,37 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Assembler } from '../models/assembler.model';
-import { MockDataService } from './mock-data.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AssemblerService {
-  constructor(private mockDataService: MockDataService) {}
+  private apiUrl = 'http://localhost:5161/api';
+
+  constructor(private http: HttpClient) {}
 
   getAssemblers(): Observable<Assembler[]> {
-    return of(this.mockDataService.getAssemblers()).pipe(delay(300));
+    return this.http.get<Assembler[]>(`${this.apiUrl}/assemblers`);
   }
 
-  getAssemblerById(id: string): Observable<Assembler | undefined> {
-    return of(this.mockDataService.getAssemblerById(id)).pipe(delay(300));
+  getAssemblerById(id: number): Observable<Assembler> {
+    return this.http.get<Assembler>(`${this.apiUrl}/assemblers/${id}`);
   }
 
-  getAssemblersByService(serviceId: string): Observable<Assembler[]> {
-    return of(this.mockDataService.getAssemblersByService(serviceId)).pipe(delay(300));
+  getAssemblerByUserId(userId: number): Observable<Assembler> {
+    return this.http.get<Assembler>(`${this.apiUrl}/assemblers/by-user/${userId}`);
+  }
+
+  createAssembler(assembler: any): Observable<Assembler> {
+    return this.http.post<Assembler>(`${this.apiUrl}/assemblers`, assembler);
+  }
+
+  updateAssembler(id: number, assembler: Assembler): Observable<Assembler> {
+    return this.http.put<Assembler>(`${this.apiUrl}/assemblers/${id}`, assembler);
+  }
+
+  deleteAssembler(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/assemblers/${id}`);
   }
 }

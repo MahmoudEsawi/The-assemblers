@@ -9,16 +9,26 @@
           <i class="icon-search"></i>
           Browse Services
         </button>
-        <button class="btn-secondary btn-large" routerLink="/register" [queryParams]="{role: 'assembler'}">
+        <button class="btn-secondary btn-large" routerLink="/register" [queryParams]="{role: 'Assembler'}">
           <i class="icon-user"></i>
           Join as a Professional
         </button>
       </div>
     </div>
     <div class="hero-image">
-      <img src="/assets/hero-home.jpg" alt="Professional Home Services" onerror="this.src='/assets/services/placeholder.jpg'">
+      <img src="https://images.unsplash.com/photo-1581578731548-c6a0c3f2fcc0?w=1200&h=600&fit=crop" alt="Professional Home Services" onerror="this.src='/assets/services/placeholder.jpg'">
     </div>
   </section>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message" style="background: #ffebee; color: #c62828; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #c62828;">
+    <strong>Error:</strong> {{ errorMessage }}
+  </div>
+
+  <!-- Loading Message -->
+  <div *ngIf="isLoading" class="loading-message" style="text-align: center; padding: 40px; color: #666;">
+    <p>Loading content...</p>
+  </div>
 
   <!-- Services Preview Section -->
   <section class="services-preview">
@@ -28,7 +38,7 @@
         <p>Get professional help for all your home improvement projects</p>
       </div>
       
-      <div class="services-grid">
+      <div class="services-grid" *ngIf="!isLoading">
         <div class="service-preview-card" *ngFor="let service of popularServices" (click)="onServiceClick(service.id)">
           <div class="service-image">
             <img [src]="service.imageUrl" [alt]="service.name" onerror="this.src='/assets/services/placeholder.jpg'">
@@ -85,7 +95,7 @@
           <button class="btn-primary btn-large" routerLink="/services">
             Find Services
           </button>
-          <button class="btn-outline btn-large" routerLink="/register" [queryParams]="{role: 'assembler'}">
+          <button class="btn-outline btn-large" routerLink="/register" [queryParams]="{role: 'Assembler'}">
             Become a Professional
           </button>
         </div>

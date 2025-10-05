@@ -10,9 +10,13 @@ import { ServicesComponent } from './features/services/pages/services/services.c
 import { AuthGuard } from './core/guards/auth.guard';
 import { BookingComponent } from './features/booking/pages/booking/booking.component';
 import { ServiceAssemblersComponent } from './features/services/pages/service-assemblers/service-assemblers.component';
+import { TestApiComponent } from './test-api.component';
+import { ResponsiveTestComponent } from './responsive-test.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
+  { path: 'test-api', component: TestApiComponent },
+  { path: 'responsive-test', component: ResponsiveTestComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   {
@@ -28,7 +32,7 @@ export const routes: Routes = [
   { path: 'profile/:id', component: ProfileComponent },
   { path: 'assemblers', component: AssemblersComponent },
   { path: 'services', component: ServicesComponent },
-  { path: 'booking/:serviceId/:assemblerId?', component: BookingComponent, canActivate: [AuthGuard] },
+  { path: 'booking/:serviceId/:assemblerId?', component: BookingComponent },
   { path: 'service-assemblers/:serviceId', component: ServiceAssemblersComponent },
   { path: '**', redirectTo: '' }
 ];
