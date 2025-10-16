@@ -1,0 +1,53 @@
+@use '../../../../theme' as *;
+
+.search-bar {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba($text-color, 0.3);
+    border-radius: 30px;
+    background-color: rgba($card-background, 0.1);
+    color: $text-color;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+
+    &::placeholder {
+      color: rgba($text-color, 0.6);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+    }
+  }
+
+  .clear-btn {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: $text-secondary;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: $text-color;
+      background-color: rgba($text-color, 0.1);
+    }
+  }
+}

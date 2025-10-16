@@ -1,0 +1,151 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2>Join The Assemblers</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input 
+          id="name" 
+          type="text" 
+          formControlName="name" 
+          class="form-control" 
+          [ngClass]="{'is-invalid': registerForm.controls['name'].touched && registerForm.controls['name'].invalid}"
+        >
+        <div *ngIf="registerForm.controls['name'].touched && registerForm.controls['name'].invalid" class="invalid-feedback">
+          Name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          id="email" 
+          type="email" 
+          formControlName="email" 
+          class="form-control" 
+          [ngClass]="{'is-invalid': registerForm.controls['email'].touched && registerForm.controls['email'].invalid}"
+        >
+        <div *ngIf="registerForm.controls['email'].touched && registerForm.controls['email'].invalid" class="invalid-feedback">
+          <div *ngIf="registerForm.controls['email'].errors?.['required']">Email is required</div>
+          <div *ngIf="registerForm.controls['email'].errors?.['email']">Please enter a valid email</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          id="password" 
+          type="password" 
+          formControlName="password" 
+          class="form-control" 
+          [ngClass]="{'is-invalid': registerForm.controls['password'].touched && registerForm.controls['password'].invalid}"
+        >
+        <div *ngIf="registerForm.controls['password'].touched && registerForm.controls['password'].invalid" class="invalid-feedback">
+          <div *ngIf="registerForm.controls['password'].errors?.['required']">Password is required</div>
+          <div *ngIf="registerForm.controls['password'].errors?.['minlength']">Password must be at least 6 characters</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input 
+          id="confirmPassword" 
+          type="password" 
+          formControlName="confirmPassword" 
+          class="form-control" 
+          [ngClass]="{'is-invalid': (registerForm.controls['confirmPassword'].touched || registerForm.controls['password'].touched) && registerForm.errors?.['passwordMismatch']}"
+        >
+        <div *ngIf="(registerForm.controls['confirmPassword'].touched || registerForm.controls['password'].touched) && registerForm.errors?.['passwordMismatch']" class="invalid-feedback">
+          Passwords do not match
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone (Optional)</label>
+        <input 
+          id="phone" 
+          type="tel" 
+          formControlName="phone" 
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address (Optional)</label>
+        <input 
+          id="address" 
+          type="text" 
+          formControlName="address" 
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>I want to join as:</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" formControlName="role" value="Customer" (change)="onRoleChange()"> Customer
+          </label>
+          <label class="radio-label">
+            <input type="radio" formControlName="role" value="Assembler" (change)="onRoleChange()"> Assembler
+          </label>
+        </div>
+      </div>
+
+      <!-- Assembler specific fields -->
+      <div *ngIf="isAssembler">
+        <div class="form-group">
+          <label for="specialization">Specialization</label>
+          <input 
+            id="specialization" 
+            type="text" 
+            formControlName="specialization" 
+            class="form-control" 
+            [ngClass]="{'is-invalid': registerForm.controls['specialization'].touched && registerForm.controls['specialization'].invalid}"
+          >
+          <div *ngIf="registerForm.controls['specialization'].touched && registerForm.controls['specialization'].invalid" class="invalid-feedback">
+            Specialization is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea 
+            id="description" 
+            formControlName="description" 
+            class="form-control" 
+            rows="3"
+            [ngClass]="{'is-invalid': registerForm.controls['description'].touched && registerForm.controls['description'].invalid}"
+          ></textarea>
+          <div *ngIf="registerForm.controls['description'].touched && registerForm.controls['description'].invalid" class="invalid-feedback">
+            Description is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input 
+            id="location" 
+            type="text" 
+            formControlName="location" 
+            class="form-control" 
+            [ngClass]="{'is-invalid': registerForm.controls['location'].touched && registerForm.controls['location'].invalid}"
+          >
+          <div *ngIf="registerForm.controls['location'].touched && registerForm.controls['location'].invalid" class="invalid-feedback">
+            Location is required
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="registerForm.invalid">Register</button>
+    </form>
+
+    <div class="register-footer">
+      <p>Already have an account? <a routerLink="/login">Login</a></p>
+    </div>
+  </div>
+</div>

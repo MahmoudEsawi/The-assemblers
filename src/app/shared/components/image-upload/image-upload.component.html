@@ -1,0 +1,102 @@
+<div class="image-upload-container">
+  <!-- Upload Area -->
+  <div 
+    class="upload-area"
+    [class.drag-over]="isDragOver"
+    [class.has-files]="selectedFiles.length > 0"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="triggerFileInput()">
+    
+    <input 
+      type="file" 
+      id="fileInput"
+      [multiple]="multiple"
+      [accept]="acceptedTypes"
+      (change)="onFileSelected($event)"
+      style="display: none;">
+    
+    <div class="upload-content" *ngIf="selectedFiles.length === 0">
+      <div class="upload-icon">📁</div>
+      <h3>Upload Images</h3>
+      <p>Drag and drop images here or click to browse</p>
+      <div class="upload-info">
+        <span>Max {{ maxFiles }} files, {{ maxSize }}MB each</span>
+        <span>Supported: JPG, PNG, WebP, GIF</span>
+      </div>
+    </div>
+
+    <div class="selected-files" *ngIf="selectedFiles.length > 0">
+      <h4>Selected Files ({{ selectedFiles.length }}/{{ maxFiles }})</h4>
+      <div class="file-list">
+        <div *ngFor="let file of selectedFiles; let i = index" class="file-item">
+          <div class="file-preview">
+            <img [src]="getFilePreview(file)" [alt]="file.name" *ngIf="file.type.startsWith('image/')">
+            <div class="file-icon" *ngIf="!file.type.startsWith('image/')">📄</div>
+          </div>
+          <div class="file-info">
+            <span class="file-name">{{ file.name }}</span>
+            <span class="file-size">{{ formatFileSize(file.size) }}</span>
+          </div>
+          <button class="remove-btn" (click)="removeSelectedFile(i)">×</button>
+        </div>
+      </div>
+      
+      <div class="upload-actions">
+        <button 
+          class="upload-btn" 
+          (click)="uploadImages()" 
+          [disabled]="isUploading || selectedFiles.length === 0">
+          <span *ngIf="!isUploading">Upload {{ selectedFiles.length }} Files</span>
+          <span *ngIf="isUploading">Uploading...</span>
+        </button>
+        <button class="clear-btn" (click)="clearAll()">Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Progress -->
+  <div class="upload-progress" *ngIf="showProgress && uploadProgressList.length > 0">
+    <h4>Upload Progress</h4>
+    <div class="progress-list">
+      <div *ngFor="let progress of uploadProgressList" class="progress-item">
+        <div class="progress-info">
+          <span class="file-name">{{ progress.fileId }}</span>
+          <span class="progress-status">{{ progress.status }}</span>
+        </div>
+        <div class="progress-bar">
+          <div 
+            class="progress-fill" 
+            [style.width.%]="progress.progress"
+            [class.error]="progress.status === 'error'">
+          </div>
+        </div>
+        <span class="progress-percentage">{{ progress.progress }}%</span>
+        <div class="progress-error" *ngIf="progress.error">
+          {{ progress.error }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Uploaded Images -->
+  <div class="uploaded-images" *ngIf="showPreview && uploadedImages.length > 0">
+    <h4>Uploaded Images ({{ uploadedImages.length }})</h4>
+    <div class="image-gallery">
+      <div *ngFor="let image of uploadedImages; let i = index" class="image-item">
+        <div class="image-container">
+          <img [src]="image.thumbnailUrl" [alt]="image.originalName">
+          <div class="image-overlay">
+            <button class="view-btn" (click)="viewImage(image.url)"><i class="fas fa-eye"></i></button>
+            <button class="delete-btn" (click)="removeUploadedImage(i)"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="image-info">
+          <span class="image-name">{{ image.originalName }}</span>
+          <span class="image-size">{{ formatFileSize(image.size) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,202 @@
+<div class="booking-container">
+  <div class="container">
+    <!-- Header -->
+    <div class="booking-header">
+      <h1>Book Service</h1>
+      <p *ngIf="service">Book {{ service.Name || 'Service' }} with our professional assemblers</p>
+    </div>
+
+    <!-- Service Info -->
+    <div *ngIf="service" class="service-info card">
+      <div class="service-details">
+        <img [src]="service.ImageUrl || '/assets/services/placeholder.jpg'" [alt]="service.Name || 'Service'" class="service-image">
+        <div class="service-content">
+          <h2>{{ service.Name || 'Service' }}</h2>
+          <p class="service-description">{{ service.Description || 'No description available' }}</p>
+          <div class="service-meta">
+            <span class="service-category">{{ service.Category?.Name || 'General' }}</span>
+            <span class="service-price">{{ service.Price || 0 }} JD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="booking-form-container">
+      <div class="booking-steps">
+        <!-- Step 1: Select Assembler -->
+        <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Select Assembler</h3>
+            <p>Choose your preferred assembler</p>
+          </div>
+        </div>
+
+        <!-- Step 2: Select Date & Time -->
+        <div class="step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Select Date & Time</h3>
+            <p>Choose your preferred date and time</p>
+          </div>
+        </div>
+
+        <!-- Step 3: Confirm Booking -->
+        <div class="step" [class.active]="currentStep === 3">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Confirm Booking</h3>
+            <p>Review and confirm your booking</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1: Assembler Selection -->
+      <div *ngIf="currentStep === 1" class="step-content">
+        <h2>Available Assemblers</h2>
+        <div class="assemblers-grid">
+          <div 
+            *ngFor="let assembler of assemblers" 
+            class="assembler-card"
+            [class.selected]="selectedAssembler?.id === assembler.id"
+            (click)="selectAssembler(assembler.id)">
+            <div class="assembler-image">
+              <img [src]="assembler.user?.profileImage || '/assets/services/placeholder.jpg'" [alt]="assembler.user?.name || 'Assembler'">
+              <div *ngIf="assembler.isVerified" class="verified-badge">✓</div>
+            </div>
+            <div class="assembler-info">
+              <h3>{{ assembler.user?.name || 'Unknown Assembler' }}</h3>
+              <p class="specialization">{{ assembler.specialization }}</p>
+              <div class="rating">
+                <span class="stars" [innerHTML]="getStarRating(assembler.averageRating)"></span>
+                <span class="rating-value">{{ assembler.averageRating }}</span>
+              </div>
+              <p class="location">📍 {{ assembler.location }}</p>
+              <div class="availability-status">
+                <span [class]="isAssemblerAvailable(assembler.id) ? 'available' : 'unavailable'">
+                  {{ isAssemblerAvailable(assembler.id) ? 'Available' : 'Unavailable' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="step-actions">
+          <button 
+            class="btn btn-primary btn-lg" 
+            [disabled]="!selectedAssembler"
+            (click)="nextStep()">
+            Continue to Date Selection
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Date & Time Selection -->
+      <div *ngIf="currentStep === 2" class="step-content">
+        <h2>Select Date & Time</h2>
+        
+        <!-- Calendar -->
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <button class="btn btn-icon" (click)="previousMonth()">‹</button>
+            <h3>{{ getMonthName(currentMonth) }} {{ currentYear }}</h3>
+            <button class="btn btn-icon" (click)="nextMonth()">›</button>
+          </div>
+          
+          <div class="calendar-grid">
+            <div class="calendar-day-header" *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">
+              {{ day }}
+            </div>
+            <div 
+              *ngFor="let day of calendarDays" 
+              class="calendar-day"
+              [class.disabled]="!day.enabled"
+              [class.selected]="day.selected"
+              [class.today]="day.isToday"
+              (click)="selectDate(day)">
+              <span class="day-number">{{ day.day }}</span>
+              <div *ngIf="day.hasAvailability" class="availability-indicator"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Time Slots -->
+        <div *ngIf="selectedDate" class="time-slots-container">
+          <h3>Available Time Slots</h3>
+          <div class="time-slots-grid">
+            <button 
+              *ngFor="let time of availableTimeSlots" 
+              class="time-slot"
+              [class.selected]="selectedTime === time"
+              [class.unavailable]="!isTimeSlotAvailable(time)"
+              (click)="selectTime(time)">
+              {{ time }}
+            </button>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn btn-secondary" (click)="previousStep()">Back</button>
+          <button 
+            class="btn btn-primary btn-lg" 
+            [disabled]="!selectedDate || !selectedTime"
+            (click)="nextStep()">
+            Continue to Confirmation
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Booking Confirmation -->
+      <div *ngIf="currentStep === 3" class="step-content">
+        <h2>Confirm Your Booking</h2>
+        
+        <div class="booking-summary card">
+          <h3>Booking Summary</h3>
+          <div class="summary-item">
+            <span class="label">Service:</span>
+            <span class="value">{{ service?.name }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Assembler:</span>
+            <span class="value">{{ selectedAssembler?.user?.name || 'Unknown Assembler' }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Date:</span>
+            <span class="value">{{ selectedDate | date:'fullDate' }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Time:</span>
+            <span class="value">{{ selectedTime }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Price:</span>
+            <span class="value">{{ service?.price }} JD</span>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group">
+          <label for="notes">Additional Notes (Optional)</label>
+          <textarea 
+            id="notes"
+            [(ngModel)]="notes" 
+            placeholder="Any special instructions or requirements..."
+            rows="4">
+          </textarea>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn btn-secondary" (click)="previousStep()">Back</button>
+          <button 
+            class="btn btn-primary btn-lg" 
+            [disabled]="isSubmitting"
+            (click)="submitBooking()">
+            <span *ngIf="isSubmitting" class="loading-spinner"></span>
+            {{ isSubmitting ? 'Creating Booking...' : 'Confirm Booking' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

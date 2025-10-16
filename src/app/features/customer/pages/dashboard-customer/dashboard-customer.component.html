@@ -1,0 +1,209 @@
+<div class="dashboard-container">
+  <!-- Welcome Header -->
+  <div class="dashboard-header">
+    <div class="welcome-content">
+      <div class="welcome-text">
+        <h1>Welcome back, {{ user.name }}! 👋</h1>
+        <p>Here's what's happening with your home services</p>
+      </div>
+      <div class="user-avatar">
+        <img [src]="'assets/default-avatar.png'" [alt]="user.name">
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-content">
+        <h3>{{ bookings.length }}</h3>
+        <p>Total Bookings</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-content">
+        <h3>{{ getPendingBookings() }}</h3>
+        <p>Pending</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-content">
+        <h3>{{ getCompletedBookings() }}</h3>
+        <p>Completed</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-star"></i></div>
+      <div class="stat-content">
+        <h3>4.8</h3>
+        <p>Avg Rating</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="actions-grid">
+      <button class="action-card" routerLink="/services">
+        <div class="action-icon"><i class="fas fa-search"></i></div>
+        <h3>Find Services</h3>
+        <p>Browse available home services</p>
+      </button>
+      <button class="action-card" routerLink="/assemblers">
+        <div class="action-icon"><i class="fas fa-user-tie"></i></div>
+        <h3>View Professionals</h3>
+        <p>See all available assemblers</p>
+      </button>
+      <button class="action-card" (click)="refreshBookings()">
+        <div class="action-icon">🔄</div>
+        <h3>Refresh</h3>
+        <p>Update your bookings</p>
+      </button>
+    </div>
+  </div>
+
+  <!-- Bookings Section -->
+  <div class="bookings-section">
+    <div class="section-header">
+      <h2>Your Bookings</h2>
+      <div class="filter-tabs">
+        <button 
+          class="filter-tab" 
+          [class.active]="selectedFilter === 'all'"
+          (click)="setFilter('all')">
+          All ({{ bookings.length }})
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="selectedFilter === 'pending'"
+          (click)="setFilter('pending')">
+          Pending ({{ getPendingBookings() }})
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="selectedFilter === 'confirmed'"
+          (click)="setFilter('confirmed')">
+          Confirmed ({{ getConfirmedBookings() }})
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="selectedFilter === 'completed'"
+          (click)="setFilter('completed')">
+          Completed ({{ getCompletedBookings() }})
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="filteredBookings.length > 0" class="bookings-grid">
+      <div *ngFor="let booking of filteredBookings" class="booking-card" [ngClass]="getStatusClass(booking.status)">
+        <div class="booking-header">
+          <div class="booking-id">
+            <span class="booking-number">#{{ booking.id }}</span>
+            <span class="booking-date">{{ booking.date | date:'MMM d, y' }}</span>
+          </div>
+          <div class="booking-status" [ngClass]="getStatusClass(booking.status)">
+            <div class="status-dot"></div>
+            {{ getStatusText(booking.status) }}
+          </div>
+        </div>
+
+        <div class="booking-content">
+          <div class="service-info">
+            <div class="service-icon"><i class="fas fa-wrench"></i></div>
+            <div class="service-details">
+              <h4>{{ getServiceName(booking.serviceId) }}</h4>
+              <p>{{ getServiceDescription(booking.serviceId) }}</p>
+            </div>
+          </div>
+
+          <div class="assembler-info">
+            <div class="assembler-avatar">
+              <img [src]="getAssemblerImage(booking.assemblerId)" [alt]="getAssemblerName(booking.assemblerId)">
+            </div>
+            <div class="assembler-details">
+              <h5>{{ getAssemblerName(booking.assemblerId) }}</h5>
+              <p>{{ getAssemblerSpecialization(booking.assemblerId) }}</p>
+              <div class="assembler-rating">
+                <span class="stars">{{ getAssemblerRating(booking.assemblerId) }}</span>
+                <span>{{ getAssemblerRating(booking.assemblerId) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="booking-details">
+            <div class="detail-item">
+              <i class="detail-icon">📅</i>
+              <span>{{ booking.date | date:'EEEE, MMMM d, y' }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="detail-icon">⏰</i>
+              <span>{{ booking.date | date:'h:mm a' }}</span>
+            </div>
+            <div class="detail-item" *ngIf="booking.notes">
+              <i class="detail-icon"><i class="fas fa-sticky-note"></i></i>
+              <span>{{ booking.notes }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-actions">
+          <button class="btn-outline" (click)="viewBookingDetails(booking.id)">
+            <i class="btn-icon"><i class="fas fa-eye"></i></i>
+            View Details
+          </button>
+          <button 
+            *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
+            class="btn-secondary" 
+            (click)="cancelBooking(booking.id)">
+            <i class="btn-icon"><i class="fas fa-times"></i></i>
+            Cancel
+          </button>
+          <button 
+            *ngIf="booking.status === 'completed'"
+            class="btn-primary" 
+            (click)="rateBooking(booking.id)">
+            <i class="btn-icon"><i class="fas fa-star"></i></i>
+            Rate Service
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredBookings.length === 0" class="no-bookings">
+      <div class="no-bookings-content">
+        <div class="no-bookings-icon">📅</div>
+        <h3>No bookings found</h3>
+        <p *ngIf="selectedFilter === 'all'">You don't have any bookings yet. Start by browsing our services!</p>
+        <p *ngIf="selectedFilter !== 'all'">No {{ selectedFilter }} bookings found.</p>
+        <button class="btn-primary" routerLink="/services">
+          <i class="btn-icon"><i class="fas fa-search"></i></i>
+          Browse Services
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Details Modal -->
+<app-booking-details
+  *ngIf="showBookingDetails && selectedBooking"
+  [booking]="selectedBooking"
+  [service]="selectedService"
+  [assembler]="selectedAssembler"
+  (close)="closeBookingDetails()"
+  (cancel)="cancelBooking($event)"
+  (rate)="rateBooking($event)">
+</app-booking-details>
+
+<!-- Rating Modal -->
+<app-rating-modal
+  *ngIf="showRatingModal && getRatingBookingInfo()"
+  [assemblerName]="getRatingBookingInfo()!.assemblerName"
+  [serviceName]="getRatingBookingInfo()!.serviceName"
+  (close)="closeRatingModal()"
+  (submitRating)="submitRating($event)">
+</app-rating-modal>

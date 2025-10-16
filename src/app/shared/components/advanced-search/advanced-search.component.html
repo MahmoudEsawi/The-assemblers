@@ -1,0 +1,196 @@
+<div class="advanced-search-container">
+  <div class="search-header">
+    <h3>Advanced Search</h3>
+    <button class="clear-filters-btn" (click)="clearFilters()">Clear All</button>
+  </div>
+
+  <div class="search-filters">
+    <!-- Location Search -->
+    <div class="filter-group">
+      <label class="filter-label">Location</label>
+      
+      <div class="location-options">
+        <label class="radio-option">
+          <input 
+            type="radio" 
+            name="locationType" 
+            [(ngModel)]="useCurrentLocation" 
+            [value]="true"
+            (change)="onLocationToggle()">
+          <span class="radio-text">Use Current Location</span>
+        </label>
+        
+        <label class="radio-option">
+          <input 
+            type="radio" 
+            name="locationType" 
+            [(ngModel)]="useCurrentLocation" 
+            [value]="false"
+            (change)="onLocationToggle()">
+          <span class="radio-text">Custom Address</span>
+        </label>
+      </div>
+
+      <div *ngIf="useCurrentLocation" class="current-location">
+        <div *ngIf="isGettingLocation" class="loading-location">
+          <div class="spinner"></div>
+          <span>Getting your location...</span>
+        </div>
+        <div *ngIf="!isGettingLocation && currentLocation" class="location-info">
+          <i class="location-icon">📍</i>
+          <span>{{ currentLocation.address || 'Current Location' }}</span>
+        </div>
+        <div *ngIf="!isGettingLocation && !currentLocation" class="no-location">
+          <i class="warning-icon"><i class="fas fa-exclamation-triangle"></i></i>
+          <span>Location not available</span>
+        </div>
+      </div>
+
+      <div *ngIf="!useCurrentLocation" class="custom-address">
+        <input 
+          type="text" 
+          [(ngModel)]="customAddress"
+          (blur)="onAddressChange()"
+          placeholder="Enter address or city"
+          class="address-input">
+      </div>
+
+      <div class="radius-slider">
+        <label>Search Radius: {{ radius }}km</label>
+        <input 
+          type="range" 
+          [(ngModel)]="radius"
+          (ngModelChange)="onFiltersChange()"
+          min="1" 
+          max="50" 
+          class="radius-range">
+      </div>
+    </div>
+
+    <!-- Price Range -->
+    <div class="filter-group">
+      <label class="filter-label">Price Range (JD/hour)</label>
+      <div class="price-range">
+        <div class="price-inputs">
+          <input 
+            type="number" 
+            [(ngModel)]="priceRange.min"
+            (ngModelChange)="onFiltersChange()"
+            placeholder="Min"
+            class="price-input">
+          <span class="price-separator">-</span>
+          <input 
+            type="number" 
+            [(ngModel)]="priceRange.max"
+            (ngModelChange)="onFiltersChange()"
+            placeholder="Max"
+            class="price-input">
+        </div>
+        <div class="price-slider">
+          <input 
+            type="range" 
+            [(ngModel)]="priceRange.min"
+            (ngModelChange)="onFiltersChange()"
+            [max]="priceRange.max"
+            class="price-range-slider">
+          <input 
+            type="range" 
+            [(ngModel)]="priceRange.max"
+            (ngModelChange)="onFiltersChange()"
+            [min]="priceRange.min"
+            class="price-range-slider">
+        </div>
+      </div>
+    </div>
+
+    <!-- Rating Filter -->
+    <div class="filter-group">
+      <label class="filter-label">Minimum Rating</label>
+      <div class="rating-filter">
+        <div class="rating-stars">
+          <span 
+            *ngFor="let star of [1,2,3,4,5]" 
+            class="star"
+            [class.active]="star <= minRating"
+            (click)="minRating = star; onFiltersChange()">
+            <i class="fas fa-star"></i>
+          </span>
+        </div>
+        <span class="rating-text">{{ minRating }}+ stars</span>
+      </div>
+    </div>
+
+    <!-- Service Type -->
+    <div class="filter-group">
+      <label class="filter-label">Service Type</label>
+      <select 
+        [(ngModel)]="selectedService"
+        (ngModelChange)="onFiltersChange()"
+        class="service-select">
+        <option value="">All Services</option>
+        <option *ngFor="let service of services" [value]="service.Id">
+          {{ service.Name || 'Service' }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Availability Filter -->
+    <div class="filter-group">
+      <label class="checkbox-option">
+        <input 
+          type="checkbox" 
+          [(ngModel)]="onlyAvailable"
+          (ngModelChange)="onFiltersChange()">
+        <span class="checkbox-text">Only Available Now</span>
+      </label>
+    </div>
+
+    <!-- Sort Options -->
+    <div class="filter-group">
+      <label class="filter-label">Sort By</label>
+      <div class="sort-options">
+        <label class="radio-option">
+          <input 
+            type="radio" 
+            name="sortBy" 
+            [(ngModel)]="sortBy" 
+            value="distance"
+            (ngModelChange)="onFiltersChange()">
+          <span class="radio-text">Distance</span>
+        </label>
+        <label class="radio-option">
+          <input 
+            type="radio" 
+            name="sortBy" 
+            [(ngModel)]="sortBy" 
+            value="rating"
+            (ngModelChange)="onFiltersChange()">
+          <span class="radio-text">Rating</span>
+        </label>
+        <label class="radio-option">
+          <input 
+            type="radio" 
+            name="sortBy" 
+            [(ngModel)]="sortBy" 
+            value="price"
+            (ngModelChange)="onFiltersChange()">
+          <span class="radio-text">Price</span>
+        </label>
+        <label class="radio-option">
+          <input 
+            type="radio" 
+            name="sortBy" 
+            [(ngModel)]="sortBy" 
+            value="name"
+            (ngModelChange)="onFiltersChange()">
+          <span class="radio-text">Name</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Results Summary -->
+  <div class="search-summary" *ngIf="filteredResults.length > 0">
+    <p>Found {{ filteredResults.length }} assemblers matching your criteria</p>
+  </div>
+</div>

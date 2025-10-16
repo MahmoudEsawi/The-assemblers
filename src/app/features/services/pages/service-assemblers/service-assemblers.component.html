@@ -1,0 +1,36 @@
+<div class="service-assemblers-container">
+  <div class="service-header" *ngIf="service">
+    <div class="service-info">
+      <h1>{{ service.Name || 'Service' }}</h1>
+      <p class="service-description">{{ service.Description || 'No description available' }}</p>
+      <div class="service-meta">
+        <div class="service-rating">
+          <span class="stars" [innerHTML]="getStarRating(service.AverageRating || 0)"></span>
+          <span class="rating-text">{{ service.AverageRating || 0 }} ({{ service.ReviewCount || 0 }} reviews)</span>
+        </div>
+        <div class="service-price">${{ service.Price || 0 }}/hour</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="assemblers-section">
+    <h2>Available Assemblers for {{ service?.Name }}</h2>
+    <p class="section-description">Choose from our verified professionals who specialize in {{ service?.Name?.toLowerCase() || 'this service' }}</p>
+    
+    <div class="assemblers-grid" *ngIf="assemblers.length > 0; else noAssemblers">
+      <app-assembler-card 
+        *ngFor="let assembler of assemblers" 
+        [assembler]="assembler"
+        (bookService)="onBookService($event)"
+        (viewProfile)="onViewProfile($event)">
+      </app-assembler-card>
+    </div>
+    
+    <ng-template #noAssemblers>
+      <div class="no-assemblers">
+        <p>No assemblers available for this service at the moment.</p>
+        <button class="btn-secondary" routerLink="/services">Back to Services</button>
+      </div>
+    </ng-template>
+  </div>
+</div>

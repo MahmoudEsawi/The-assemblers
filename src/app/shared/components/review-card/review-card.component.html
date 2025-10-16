@@ -1,0 +1,17 @@
+<div class="review-card card">
+    <div class="review-header">
+      <div class="review-rating">
+        <div class="stars">
+          <span *ngFor="let star of getStars(review.rating)" class="star" [class.filled]="star === 1" [class.half]="star === 0.5"><i class="fas fa-star"></i></span>
+        </div>
+        <span class="rating-value">{{ review.rating }}</span>
+      </div>
+      <div class="review-date">{{ formatDate(review.createdAt) }}</div>
+    </div>
+    <div class="review-content">
+      <p>{{ review.comment }}</p>
+    </div>
+    <div class="review-actions" *ngIf="canEdit">
+      <button class="btn btn-secondary" (click)="editReview.emit(review)">Edit</button>
+    </div>
+  </div>

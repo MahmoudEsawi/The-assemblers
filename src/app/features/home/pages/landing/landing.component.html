@@ -1,0 +1,105 @@
+<div class="landing-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Find Professional Home Services</h1>
+      <p class="hero-subtitle">Connect with verified professionals for all your home improvement and maintenance needs</p>
+      <div class="hero-actions">
+        <button class="btn-primary btn-large" routerLink="/services">
+          <i class="icon-search"></i>
+          Browse Services
+        </button>
+        <button class="btn-secondary btn-large" routerLink="/register" [queryParams]="{role: 'Assembler'}">
+          <i class="icon-user"></i>
+          Join as a Professional
+        </button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="https://images.unsplash.com/photo-1581578731548-c6a0c3f2fcc0?w=1200&h=600&fit=crop&q=80" alt="Professional Home Services" onerror="this.src='/assets/services/placeholder.jpg'">
+    </div>
+  </section>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message" style="background: #ffebee; color: #c62828; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #c62828;">
+    <strong>Error:</strong> {{ errorMessage }}
+  </div>
+
+  <!-- Loading Message -->
+  <div *ngIf="isLoading" class="loading-message" style="text-align: center; padding: 40px; color: #666;">
+    <p>Loading content...</p>
+  </div>
+
+  <!-- Services Preview Section -->
+  <section class="services-preview">
+    <div class="container">
+      <div class="section-header">
+        <h2>Popular Home Services</h2>
+        <p>Get professional help for all your home improvement projects</p>
+      </div>
+      
+      <div class="services-grid" *ngIf="!isLoading">
+        <div class="service-preview-card" *ngFor="let service of popularServices" (click)="onServiceClick(service.Id)">
+          <div class="service-image">
+            <img [src]="service.ImageUrl || '/assets/services/placeholder.jpg'" [alt]="service.Name || 'Service'" onerror="this.src='/assets/services/placeholder.jpg'">
+          </div>
+          <div class="service-content">
+            <h3>{{ service.Name || 'Service' }}</h3>
+            <p>{{ service.Description || 'No description available' }}</p>
+            <div class="service-meta">
+              <span class="rating">
+                <i class="icon-star"></i>
+                {{ service.AverageRating || 0 }}
+              </span>
+              <span class="price">{{ service.Price || 0 }} JD/hr</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="view-all-services">
+        <button class="btn-outline" routerLink="/services">
+          View All Services
+          <i class="icon-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Professionals Section -->
+  <section class="featured-professionals">
+    <div class="container">
+      <div class="section-header">
+        <h2>Featured Professionals</h2>
+        <p>Meet our top-rated assemblers and contractors</p>
+      </div>
+      
+      <div class="professionals-grid">
+        <app-assembler-card 
+          *ngFor="let assembler of featuredAssemblers" 
+          [assembler]="assembler"
+          (bookService)="onBookService($event)"
+          (viewProfile)="onViewProfile($event)">
+        </app-assembler-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Get Started?</h2>
+        <p>Join thousands of satisfied customers who trust The Assemblers for their home improvement needs</p>
+        <div class="cta-actions">
+          <button class="btn-primary btn-large" routerLink="/services">
+            Find Services
+          </button>
+          <button class="btn-outline btn-large" routerLink="/register" [queryParams]="{role: 'Assembler'}">
+            Become a Professional
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

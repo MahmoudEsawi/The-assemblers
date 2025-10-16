@@ -1,0 +1,63 @@
+@use '../../../../theme' as *;
+
+.review-card {
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    
+    .review-rating {
+      display: flex;
+      align-items: center;
+      
+      .stars {
+        display: flex;
+        margin-right: 5px;
+        
+        .star {
+          color: #ccc;
+          font-size: 16px;
+          
+          &.filled {
+            color: #ffc107;
+          }
+          
+          &.half {
+            position: relative;
+            
+            &:before {
+              content: '\f005'; /* Font Awesome star */
+              position: absolute;
+              color: #ffc107;
+              width: 50%;
+              overflow: hidden;
+            }
+          }
+        }
+      }
+      
+      .rating-value {
+        font-weight: bold;
+      }
+    }
+    
+    .review-date {
+      color: #666;
+      font-size: 14px;
+    }
+  }
+  
+  .review-content {
+    margin-bottom: 15px;
+    
+    p {
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+  
+  .review-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

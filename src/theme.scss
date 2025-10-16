@@ -1,0 +1,53 @@
+@use 'sass:color';
+
+// Modern Color Palette - Light Theme
+$background-color: #f8fafc;      // Light gray background
+$text-color: #1e293b;            // Dark slate text
+$card-background: #ffffff;       // Clean white card background
+$card-text-color: #1e293b;       // Dark slate text on cards
+$primary: #3b82f6;               // Modern blue primary
+$secondary-color: #6366f1;        // Indigo secondary
+$accent: #f59e0b;                // Amber accent
+$error-color: #ef4444;           // Modern red
+$success-color: #10b981;         // Emerald green
+$warning-color: #f59e0b;         // Amber warning
+$info-color: #06b6d4;           // Cyan info
+
+// Gradient colors
+$gradient-primary: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+$gradient-secondary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+$gradient-accent: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+$gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+$gradient-error: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+
+// Surface colors
+$surface-0: #ffffff;            // Lightest surface (white)
+$surface-1: #f1f5f9;            // Light gray surface
+$surface-2: #e2e8f0;            // Medium gray surface
+$surface-3: #cbd5e1;            // Darker gray surface
+
+// Text colors
+$text-primary: #1e293b;         // Primary text (dark slate)
+$text-secondary: #64748b;       // Secondary text (slate)
+$text-muted: #94a3b8;           // Muted text (light slate)
+$text-light: #cbd5e1;          // Light text
+
+// Border colors
+$border-color: #e2e8f0;         // Border color (light gray)
+$border-light: #f1f5f9;         // Light border
+
+// Aliases for common use
+$card-bg: $card-background;
+
+// Breakpoints
+@mixin mobile {
+  @media (max-width: 768px) { @content; }
+}
+
+@mixin tablet {
+  @media (min-width: 769px) and (max-width: 1024px) { @content; }
+}
+
+@mixin desktop {
+  @media (min-width: 1025px) { @content; }
+}

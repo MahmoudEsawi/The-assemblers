@@ -1,0 +1,123 @@
+<div class="booking-details-modal" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Booking Details</h2>
+      <button class="close-btn" (click)="onClose()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Booking Status -->
+      <div class="booking-status">
+        <div class="status-badge" [class]="getStatusClass(booking.status)">
+          {{ getStatusText(booking.status) }}
+        </div>
+      </div>
+
+      <!-- Service Information -->
+      <div class="info-section">
+        <h3><i class="fas fa-wrench"></i> Service Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Service:</label>
+            <span>{{ service?.Name || 'Service ' + booking.serviceId }}</span>
+          </div>
+          <div class="info-item">
+            <label>Description:</label>
+            <span>{{ service?.Description || 'No description available' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Price:</label>
+            <span>${{ booking.totalPrice }}/hour</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assembler Information -->
+      <div class="info-section" *ngIf="assembler">
+        <h3><i class="fas fa-user-tie"></i> Professional Information</h3>
+        <div class="assembler-info">
+          <div class="assembler-avatar">
+            <img [src]="assembler.user?.profileImage || 'assets/default-avatar.png'" [alt]="assembler.user?.name || 'Assembler'">
+          </div>
+          <div class="assembler-details">
+            <h4>{{ assembler.user?.name || 'Unknown Assembler' }}</h4>
+            <p class="specialization">{{ assembler.specialization }}</p>
+            <div class="rating">
+              <span class="stars" [innerHTML]="getStarRating(assembler.averageRating)"></span>
+              <span>{{ assembler.averageRating }}</span>
+            </div>
+            <p class="location"><i class="fas fa-map-marker-alt"></i> {{ assembler.location }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Schedule -->
+      <div class="info-section">
+        <h3><i class="fas fa-calendar-alt"></i> Schedule</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Date:</label>
+            <span>{{ formatDate(booking.date) }}</span>
+          </div>
+          <div class="info-item">
+            <label>Start Time:</label>
+            <span>{{ formatTime(booking.startTime) }}</span>
+          </div>
+          <div class="info-item">
+            <label>End Time:</label>
+            <span>{{ formatTime(booking.endTime) }}</span>
+          </div>
+          <div class="info-item">
+            <label>Duration:</label>
+            <span>{{ getDuration() }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="info-section" *ngIf="booking.notes">
+        <h3><i class="fas fa-sticky-note"></i> Notes</h3>
+        <div class="notes-content">
+          {{ booking.notes }}
+        </div>
+      </div>
+
+      <!-- Booking Summary -->
+      <div class="info-section">
+        <h3><i class="fas fa-receipt"></i> Booking Summary</h3>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <label>Service Fee:</label>
+            <span>${{ booking.totalPrice }}</span>
+          </div>
+          <div class="summary-item">
+            <label>Duration:</label>
+            <span>{{ getDuration() }}</span>
+          </div>
+          <div class="summary-item total">
+            <label>Total:</label>
+            <span>${{ booking.totalPrice }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="onClose()">Close</button>
+      <button 
+        *ngIf="booking.status === 0 || booking.status === 1"
+        class="btn-danger" 
+        (click)="onCancel()">
+        Cancel Booking
+      </button>
+      <button 
+        *ngIf="booking.status === 3"
+        class="btn-primary" 
+        (click)="onRate()">
+        Rate Service
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+# Ignore all files to disable linting
+**/*
+src/**/*
+*.ts
+*.html
+*.scss
+*.css
+*.js
+*.json

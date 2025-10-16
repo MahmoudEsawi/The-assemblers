@@ -1,0 +1,37 @@
+@use '../../../../theme' as *;
+
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+
+  .category-item {
+    padding: 0.5rem 1rem;
+    background-color: rgba($primary, 0.1);
+    border: 1px solid rgba($primary, 0.3);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    span {
+      color: $text-light;
+      font-weight: 500;
+    }
+
+    &:hover {
+      background-color: rgba($primary, 0.2);
+      border-color: $primary;
+    }
+
+    &.active {
+      background-color: $primary;
+      border-color: $primary;
+
+      span {
+        color: $card-background;
+      }
+    }
+  }
+}

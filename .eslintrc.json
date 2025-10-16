@@ -1,0 +1,65 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "projects/**/*"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.ts"
+      ],
+      "extends": [
+        "@angular-eslint/recommended"
+      ],
+      "rules": {
+        "@angular-eslint/directive-selector": "off",
+        "@angular-eslint/component-selector": "off",
+        "@angular-eslint/no-conflicting-lifecycle": "off",
+        "@angular-eslint/no-host-metadata-property": "off",
+        "@angular-eslint/no-input-rename": "off",
+        "@angular-eslint/no-inputs-metadata-property": "off",
+        "@angular-eslint/no-output-native": "off",
+        "@angular-eslint/no-output-on-prefix": "off",
+        "@angular-eslint/no-output-rename": "off",
+        "@angular-eslint/no-outputs-metadata-property": "off",
+        "@angular-eslint/use-lifecycle-interface": "off",
+        "@angular-eslint/use-pipe-transform-interface": "off",
+        "@angular-eslint/component-class-suffix": "off",
+        "@angular-eslint/directive-class-suffix": "off",
+        "@angular-eslint/no-empty-lifecycle-method": "off",
+        "@angular-eslint/prefer-on-push-change-detection": "off",
+        "@angular-eslint/relative-url-prefix": "off",
+        "@angular-eslint/sort-ngmodule-metadata-arrays": "off",
+        "@angular-eslint/use-component-view-encapsulation": "off"
+      }
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "extends": [
+        "@angular-eslint/template/recommended"
+      ],
+      "rules": {
+        "@angular-eslint/template/conditional-complexity": "off",
+        "@angular-eslint/template/cyclomatic-complexity": "off",
+        "@angular-eslint/template/no-call-expression": "off",
+        "@angular-eslint/template/no-duplicate-attributes": "off",
+        "@angular-eslint/template/no-negated-async": "off",
+        "@angular-eslint/template/use-track-by-function": "off",
+        "@angular-eslint/template/click-events-have-key-events": "off",
+        "@angular-eslint/template/mouse-events-have-key-events": "off",
+        "@angular-eslint/template/no-autofocus": "off",
+        "@angular-eslint/template/no-distracting-elements": "off",
+        "@angular-eslint/template/no-positive-tabindex": "off",
+        "@angular-eslint/template/prefer-control-flow": "off",
+        "@angular-eslint/template/no-any": "off",
+        "@angular-eslint/template/no-interpolation-in-attributes": "off",
+        "@angular-eslint/template/no-negated-async": "off",
+        "@angular-eslint/template/no-untyped-ng-template": "off",
+        "@angular-eslint/template/prefer-control-flow": "off",
+        "@angular-eslint/template/use-track-by-function": "off"
+      }
+    }
+  ]
+}

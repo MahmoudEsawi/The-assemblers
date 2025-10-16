@@ -1,0 +1,17 @@
+<div class="service-card">
+  <div class="service-image">
+    <img [src]="service.ImageUrl" [alt]="service.Name">
+  </div>
+  <div class="service-content">
+    <h3>{{ service.Name }}</h3>
+    <p class="service-description">{{ service.Description }}</p>
+    <div class="service-meta">
+      <span class="service-category">{{ service.Category?.Name }}</span>
+      <span class="service-price">{{ service.Price }} JD</span>
+    </div>
+    <div class="service-actions">
+      <button class="btn-primary" (click)="onBookService()">Book Service</button>
+      <a [routerLink]="['/service-assemblers', service.Id]" class="btn-secondary">View Assemblers</a>
+    </div>
+  </div>
+</div>

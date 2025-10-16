@@ -1,0 +1,59 @@
+<div class="rating-modal-overlay" (click)="onClose()">
+  <div class="rating-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2><i class="fas fa-star"></i> Rate Service</h2>
+      <button class="close-btn" (click)="onClose()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="service-info">
+        <h3>{{ serviceName }}</h3>
+        <p>by {{ assemblerName }}</p>
+      </div>
+
+      <div class="rating-section">
+        <h4>How would you rate this service?</h4>
+        <div class="star-rating">
+          <i 
+            *ngFor="let star of [1,2,3,4,5]" 
+            [class]="getStarClass(star)"
+            (click)="setRating(star)"
+            (mouseenter)="setHoveredRating(star)"
+            (mouseleave)="clearHoveredRating()">
+          </i>
+        </div>
+        <p class="rating-text">
+          <span *ngIf="rating === 1">Poor</span>
+          <span *ngIf="rating === 2">Fair</span>
+          <span *ngIf="rating === 3">Good</span>
+          <span *ngIf="rating === 4">Very Good</span>
+          <span *ngIf="rating === 5">Excellent</span>
+        </p>
+      </div>
+
+      <div class="comment-section">
+        <h4>Tell us about your experience (optional)</h4>
+        <textarea 
+          [(ngModel)]="comment"
+          placeholder="Share your feedback about the service..."
+          rows="4"
+          maxlength="500">
+        </textarea>
+        <div class="char-count">{{ comment.length }}/500</div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="onClose()">Cancel</button>
+      <button 
+        class="btn-primary" 
+        (click)="onSubmit()"
+        [disabled]="rating === 0">
+        <i class="fas fa-star"></i>
+        Submit Rating
+      </button>
+    </div>
+  </div>
+</div>

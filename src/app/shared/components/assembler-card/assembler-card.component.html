@@ -1,0 +1,18 @@
+<div class="assembler-card" *ngIf="assembler">
+  <div class="assembler-image">
+    <img [src]="assembler.User?.ProfileImage || '/assets/services/placeholder.jpg'" [alt]="assembler.User?.Name || 'Assembler'">
+  </div>
+  <div class="assembler-content">
+    <h3>{{ assembler.User?.Name || 'Unknown Assembler' }}</h3>
+    <p class="assembler-specialization">{{ assembler.Specialization || 'General Services' }}</p>
+    <div class="assembler-rating">
+      <span class="stars" [innerHTML]="getStarRating(assembler.AverageRating || 0)"></span>
+      <span>{{ assembler.AverageRating || 0 }}</span>
+    </div>
+    <p class="assembler-location">{{ assembler.Location || 'Location not specified' }}</p>
+    <div class="assembler-actions">
+      <button class="btn-primary" (click)="onBookService()">Book Service</button>
+      <button class="btn-secondary" (click)="onViewProfile()">View Profile</button>
+    </div>
+  </div>
+</div>

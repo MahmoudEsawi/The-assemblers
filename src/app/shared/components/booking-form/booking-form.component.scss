@@ -1,0 +1,49 @@
+@use '../../../../theme' as *;
+
+.booking-form {
+  h2 {
+    margin-bottom: 20px;
+    color: $card-text-color;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: $card-text-color;
+    }
+    
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: $card-background;
+      color: $card-text-color;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary;
+      }
+    }
+    
+    .error-message {
+      color: $error-color;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    
+    .btn {
+      min-width: 100px;
+    }
+  }
+}

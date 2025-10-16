@@ -1,0 +1,140 @@
+<div class="profile-container">
+  <div *ngIf="assembler; else loadingOrError" class="profile-card">
+    <div class="profile-header">
+      <div class="profile-cover" [style.background-image]="'url(' + assembler.coverImage + ')'"></div>
+      <div class="profile-info">
+        <div class="profile-avatar">
+          <img [src]="assembler.user?.profileImage || 'https://via.placeholder.com/150x150/cccccc/666666?text=No+Photo'" [alt]="assembler.user?.name">
+        </div>
+        <div class="profile-details">
+          <h1>{{ assembler.user?.name }}</h1>
+          <p class="profile-specialization">{{ assembler.specialization }}</p>
+          <div class="profile-rating">
+            <span class="stars" [innerHTML]="getStarRating(assembler.averageRating || 0)"></span>
+            <span>{{ assembler.averageRating || 0 }}</span>
+            <span class="rating-count">({{ reviews.length }} reviews)</span>
+          </div>
+          <p class="profile-location">{{ assembler.location }}</p>
+          <div class="profile-status">
+            <span class="status-badge" [ngClass]="{'available': isCurrentlyAvailable(), 'busy': !isCurrentlyAvailable()}">
+              {{ isCurrentlyAvailable() ? 'Available Now' : 'Currently Busy' }}
+            </span>
+            <span *ngIf="assembler.isVerified" class="verified-badge">Verified</span>
+          </div>
+          <div class="profile-price">
+            <span class="price-label">Average Price:</span>
+            <span class="price-value">{{ getAveragePrice() }} JD/hour</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-content">
+      <div class="profile-section">
+        <h2>About Me</h2>
+        <p>{{ assembler.description }}</p>
+      </div>
+
+      <div class="profile-section">
+        <h2>Availability Calendar</h2>
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <button (click)="previousMonth()" class="calendar-nav">‹</button>
+            <h4>{{ getCurrentMonthYear() }}</h4>
+            <button (click)="nextMonth()" class="calendar-nav">›</button>
+          </div>
+          <div class="calendar-grid">
+            <div class="calendar-day-header" *ngFor="let day of weekDays">{{ day }}</div>
+            <div 
+              *ngFor="let day of calendarDays" 
+              class="calendar-day"
+              [ngClass]="{
+                'available': isDayAvailable(day),
+                'busy': !isDayAvailable(day),
+                'today': isToday(day)
+              }"
+            >
+              {{ day.date }}
+              <div class="day-status">
+                <span *ngIf="isDayAvailable(day)" class="available-indicator">Free</span>
+                <span *ngIf="!isDayAvailable(day)" class="busy-indicator">Busy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <h2>Services Offered</h2>
+        <div *ngIf="services.length > 0; else noServices" class="services-grid">
+          <div *ngFor="let service of services" class="service-item">
+            <h3>{{ service.Name || 'Service' }}</h3>
+            <p>{{ service.Description || 'No description available' }}</p>
+            <div class="service-meta">
+              <div class="service-price">{{ service.Price || 0 }} JD/hour</div>
+              <div class="service-rating">
+                <span class="stars" [innerHTML]="getStarRating(service.AverageRating || 0)"></span>
+                <span>{{ service.AverageRating || 0 }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noServices>
+          <div class="no-services">
+            <p>No services offered by this assembler yet.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="profile-section">
+        <h2>Reviews</h2>
+        <div *ngIf="reviews.length > 0; else noReviews" class="reviews-list">
+          <div *ngFor="let review of reviews" class="review-item">
+            <div class="review-header">
+              <div class="review-rating">
+                <span class="stars" [innerHTML]="getStarRating(review.rating || 0)"></span>
+                <span>{{ review.rating || 0 }}</span>
+              </div>
+              <span class="review-date">{{ review.createdAt | date:'shortDate' }}</span>
+            </div>
+            <p class="review-comment">{{ review.comment }}</p>
+          </div>
+        </div>
+        <ng-template #noReviews>
+          <div class="no-reviews">
+            <p>No reviews yet for this assembler.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="profile-section">
+        <h2>Contact & Booking</h2>
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="icon-phone"></i>
+            <span>{{ assembler.user?.phone }}</span>
+          </div>
+          <div class="contact-item">
+            <i class="icon-location"></i>
+            <span>{{ assembler.location }}</span>
+          </div>
+          <div class="contact-item">
+            <i class="icon-email"></i>
+            <span>{{ assembler.user?.email }}</span>
+          </div>
+        </div>
+        <div class="booking-actions">
+          <button class="btn-primary" (click)="bookService()">Book Service</button>
+          <button class="btn-secondary" (click)="contactAssembler()">Contact</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loadingOrError>
+    <div class="error-message">
+      <p>Assembler profile not found or an error occurred.</p>
+      <button class="btn-secondary" routerLink="/services">Browse Services</button>
+    </div>
+  </ng-template>
+</div>

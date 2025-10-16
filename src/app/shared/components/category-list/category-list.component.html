@@ -1,0 +1,13 @@
+<div class="category-list">
+  <div class="category-item" 
+       [ngClass]="{'active': selectedCategory === 'all'}"
+       (click)="onSelectCategory('all')">
+    <span>All Categories</span>
+  </div>
+  <div *ngFor="let category of categories" 
+       class="category-item"
+       [ngClass]="{'active': selectedCategory === category.id}"
+       (click)="onSelectCategory(category.id)">
+    <span>{{ category.name }}</span>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="booking-form">
+    <h2>Book a Service</h2>
+    <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="date">Preferred Date & Time</label>
+        <input 
+          type="datetime-local" 
+          id="date" 
+          formControlName="date" 
+          [min]="minDate"
+        >
+        <div class="error-message" *ngIf="bookingForm.get('date')?.invalid && bookingForm.get('date')?.touched">
+          Please select a valid date and time
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="notes">Additional Notes</label>
+        <textarea 
+          id="notes" 
+          formControlName="notes" 
+          rows="4"
+          placeholder="Any special requirements or information..."
+        ></textarea>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn" [disabled]="bookingForm.invalid">Submit Booking</button>
+      </div>
+    </form>
+  </div>
